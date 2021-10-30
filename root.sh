@@ -4,10 +4,10 @@ green(){
     echo -e "\033[32m\033[01m$1\033[0m"
 }
 
-sudo lsattr /etc/passwd /etc/shadow
-sudo chattr -i /etc/passwd /etc/shadow
-sudo chattr -a /etc/passwd /etc/shadow
-sudo lsattr /etc/passwd /etc/shadow
+sudo lsattr /etc/passwd /etc/shadow >/dev/null 2>&1
+sudo chattr -i /etc/passwd /etc/shadow >/dev/null 2>&1
+sudo chattr -a /etc/passwd /etc/shadow >/dev/null 2>&1
+sudo lsattr /etc/passwd /etc/shadow >/dev/null 2>&1
 
 read -p "自定义root密码:" mima
 echo root:$mima | sudo chpasswd root
