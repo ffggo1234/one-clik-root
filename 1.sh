@@ -23,6 +23,13 @@ bblue(){
 rred(){
     echo -e "\033[35m\033[01m$1\033[0m"
 }
+readtp(){
+	read -t5 -p "$(yellow "$1")"
+}
+readp(){
+	read -p "$(green "$1")"
+}
+
 
 if [[ $EUID -ne 0 ]]; then
 yellow "请以root模式运行脚本。"
@@ -257,7 +264,7 @@ echo | wgcf register
 done
 
 yellow "继续使用原WARP账户请等待5秒或按回车跳过 \n启用WARP+PLUS账户，请在5秒内粘贴WARP+的按键许可证秘钥(26个字符)"
-read -t5 -p "按键许可证秘钥(26个字符):" ID
+readtp "按键许可证秘钥(26个字符):" ID
 if [[ -n $ID ]]; then
 sed -i "s/license_key.*/license_key = \"$ID\"/g" wgcf-account.toml
 wgcf update
@@ -453,8 +460,8 @@ systemctl disable warp-svc >/dev/null 2>&1
 [[ $release = "Centos" ]] && (yum remove cloudflare-warp -y) || (apt purge cloudflare-warp -y && rm -f /etc/apt/sources.list.d/cloudflare-client.list)
 }
 wgso2="rm -rf /usr/local/bin/wgcf /etc/wireguard/wgcf.conf /etc/wireguard/wgcf-account.toml /usr/bin/wireguard-go wgcf-account.toml wgcf-profile.conf ucore.sh nf.sh CFwarp.sh"
-un="1.卸载WGCF WARP代理 \n 2.卸载SOCKS5 WARP代理 \n 3.彻底卸载所有WARP（1与2）:"
-read -p " $un " uninstall
+un="1.卸载WGCF WARP代理\n 2.卸载SOCKS5 WARP代理\n 3.彻底卸载所有WARP（1与2）:"
+readp "$un" uninstall
 case "$uninstall" in     
  1 ) [[ $(type -P wg-quick) ]] && (cwg && green "WGCF的WARP卸载完成") || (yellow "并未安装WGCF的WARP，无法卸载" && bash CFwarp.sh);;
  2 ) [[ $(type -P warp-cli) ]] && (cso && green "SOCKS5的WARP卸载完成") || (yellow "并未安装SOCKS5的WARP，无法卸载" && bash CFwarp.sh);;
@@ -545,16 +552,16 @@ warp-cli --accept-tos connect
 warp-cli --accept-tos enable-always-on
 
 yellow "继续使用原WARP账户请按回车跳过 \n启用WARP+PLUS账户，请复制WARP+的按键许可证秘钥(26个字符)后回车"
-read -t5 -p "按键许可证秘钥(26个字符):" ID
+readtp "按键许可证秘钥(26个字符):" ID
 [[ -n $ID ]] && warp-cli --accept-tos set-license $ID
 
 yellow "\n等待5秒或者直接回车，则端口为40000"
-read -t5 -p "自定义socks5端口:" port
+readtp "自定义socks5端口:" port
 [[ ! $port ]] && port='40000'
 if [[ $(netstat -ap) =~ ":$port" ]]; then
 until [[ ! $(netstat -ap) =~ ":$port" ]]
 do
-[[ $(netstat -ap) =~ ":$port" ]] && echo "\n端口被占用，请重新输入端口" && read -p "自定义socks5端口:" port
+[[ $(netstat -ap) =~ ":$port" ]] && yellow "\n端口被占用，请重新输入端口" && readtp "自定义socks5端口:" port
 done
 fi
 [[ -n $port ]] && warp-cli --accept-tos set-proxy-port $port
