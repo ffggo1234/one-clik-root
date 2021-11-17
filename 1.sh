@@ -450,11 +450,13 @@ cwarp(){
 cwg(){
 wg-quick down wgcf >/dev/null 2>&1
 systemctl stop wg-quick@wgcf >/dev/null 2>&1
+systemctl disable wg-quick@wgcf >/dev/null 2>&1
 [[ $release = "Centos" ]] && (yum -y autoremove wireguard-tools wireguard-dkms) || (apt -y autoremove wireguard-tools wireguard-dkms)
 }
 cso(){
 warp-cli --accept-tos disconnect >/dev/null 2>&1
 systemctl stop warp-svc >/dev/null 2>&1
+systemctl disable warp-svc >/dev/null 2>&1
 [[ $release = "Centos" ]] && (yum remove cloudflare-warp -y) || (apt purge cloudflare-warp -y && rm -f /etc/apt/sources.list.d/cloudflare-client.list)
 }
 wgso2="rm -rf /usr/local/bin/wgcf /etc/wireguard/wgcf.conf /etc/wireguard/wgcf-account.toml /usr/bin/wireguard-go wgcf-account.toml wgcf-profile.conf ucore.sh nf.sh CFwarp.sh"
@@ -470,6 +472,7 @@ esac
 ocwarp(){
 WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 WARPIPv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+[[ $(type -P wg-quick) ]] && [[ $WARPIPv6 = plus || $WARPIPv4 = plus || $WARPIPv6 = on || $WARPIPv4 = on ]]
 wg=$(systemctl is-enabled wg-quick@wgcf 2>/dev/null)
 if [[ ! $wg = enabled ]]; then
 red "WARP(+)未安装，无法启动或关闭，建议重新安装WARP(+)"
@@ -490,7 +493,7 @@ fi
 un="1.开启或者关闭WGCF WARP代理\n 2.开启或关闭SOCKS5 WARP代理\n 3.开启或者关闭所有WARP（1与2）:"
 readp "$un" uninstall
 case "$uninstall" in  
-1 ) [[ $(type -P wg-quick) ]] && (cwg && green "WGCF的WARP关闭完成") || (yellow "并未安装WGCF的WARP，无法关闭" && bash CFwarp.sh);;
+1 ) [[ $WARPIPv6 = plus || $WARPIPv4 = plus || $WARPIPv6 = on || $WARPIPv4 = on ]] && (yellow "当前WARP(+)为--已开启状态，现执行:临时关闭……" && wg-quick down wgcf && green "WGCF的WARP关闭完成") || (yellow "当前WARP(+)为--临时关闭状态，现执行:恢复开启……" && systemctl restart wg-quick@wgcf && green "恢复开启WARP(+)成功");;
 2 ) [[ $(type -P warp-cli) ]] && (cso && green "SOCKS5的WARP卸载完成") || (yellow "并未安装SOCKS5的WARP，无法卸载" && bash CFwarp.sh);;
 3 ) [[ ! $(type -P wg-quick) && ! $(type -P warp-cli) ]] && (red "并没有安装任何的WARP功能，无法卸载" && CFwarp.sh) || (cwg && cso && $wgso2 && green "WARP已全部卸载完成");;
 esac
@@ -568,7 +571,7 @@ readtp "自定义socks5端口:" port
 if [[ $(netstat -ap) =~ ":$port" ]]; then
 until [[ ! $(netstat -ap) =~ ":$port" ]]
 do
-[[ $(netstat -ap) =~ ":$port" ]] && yellow "\n端口被占用，请重新输入端口" && readtp "自定义socks5端口:" port
+[[ $(netstat -ap) =~ ":$port" ]] && yellow "\n端口被占用，请重新输入端口" && readp "自定义socks5端口:" port
 done
 fi
 [[ -n $port ]] && warp-cli --accept-tos set-proxy-port $port
