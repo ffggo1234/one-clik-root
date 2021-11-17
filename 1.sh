@@ -633,7 +633,7 @@ white " VPS系统信息如下："
 white " 原生真IP特征: $(blue "双栈IPV6+IPV4的VPS")"
 Print_ALL_Status_menu
 echo
-read -p "请输入数字:" menuNumberInput
+readp "请输入数字:" menuNumberInput
 case "$menuNumberInput" in     
  1 ) iptables;;
  2 ) upcore;;
@@ -681,7 +681,7 @@ white " VPS系统信息如下："
 white " 原生真IP特征: $(blue "Only纯IPV6的VPS")"
 Print_ALL_Status_menu
 echo
-read -p "请输入数字:" menuNumberInput
+readp "请输入数字:" menuNumberInput
 case "$menuNumberInput" in     
  1 ) iptables;;
  2 ) upcore;;
@@ -729,7 +729,7 @@ white " VPS系统信息如下："
 white " 原生真IP特征: $(blue "Only纯IPV4的VPS")"
 Print_ALL_Status_menu
 echo
-read -p "请输入数字:" menuNumberInput
+readp "请输入数字:" menuNumberInput
 case "$menuNumberInput" in     
  1 ) iptables;;
  2 ) upcore;;
