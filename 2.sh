@@ -565,7 +565,6 @@ yellow "继续使用原WARP账户请按回车跳过 \n启用WARP+PLUS账户，�
 readtp "按键许可证秘钥(26个字符):" ID
 [[ -n $ID ]] && warp-cli --accept-tos set-license $ID
 
-unset port mport
 yellow "\n等待5秒或者直接回车，则端口为40000"
 readtp "自定义socks5端口:" port
 [[ ! $port ]] && port='40000'
@@ -577,7 +576,6 @@ done
 fi
 [[ -n $port ]] && warp-cli --accept-tos set-proxy-port $port
 
-systemctl restart warp-svc >/dev/null 2>&1
 svca=`systemctl is-active warp-svc`
 mport=`netstat -ap | grep warp-svc | awk -F "localhost:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}' | awk 'NR==1' 2>/dev/null`
 if [[ $svca = active ]]; then
@@ -761,7 +759,6 @@ esac
 else
 wg-quick down wgcf >/dev/null 2>&1
 systemctl restart wg-quick@wgcf >/dev/null 2>&1
-systemctl restart warp-svc >/dev/null 2>&1
 bash CFwarp.sh
 fi
 }
