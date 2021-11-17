@@ -133,7 +133,7 @@ else
 WARPIPv6Status=$(red "不存在IPV6地址 ")
 fi 
 
-if [[ $svca = active ]]; then
+if [[ $(type -P warp-cli) ]]; then
 S5Status=$(curl -sx socks5h://127.0.0.1:$mport www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 case ${S5Status} in 
 plus) 
@@ -142,7 +142,7 @@ S5Status1=$(white " socks5+状态：\c" ; rred "socks5+warp+运行中" ; white "
 on) 
 S5Status1=$(white " socks5状态：\c" ; green "socks5-warp运行中" ; white "socks5端口：\c" ; green "$mport") 
 ;;  
-off) 
+*) 
 S5Status1=$(white " socks5状态：没开启")
 ;;
 esac 
@@ -472,15 +472,14 @@ esac
 ocwarp(){
 WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 WARPIPv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
-[[ $(type -P wg-quick) ]] && [[ $WARPIPv6 = plus || $WARPIPv4 = plus || $WARPIPv6 = on || $WARPIPv4 = on ]]
-wg=$(systemctl is-enabled wg-quick@wgcf 2>/dev/null)
-if [[ ! $wg = enabled ]]; then
+
+if [[ ! $(type -P wg-quick) ]]; then
 red "WARP(+)未安装，无法启动或关闭，建议重新安装WARP(+)"
 fi
-if [[ $wg = enabled ]] && [[ $WARPIPv6 = plus || $WARPIPv4 = plus || $WARPIPv6 = on || $WARPIPv4 = on ]]; then
+if [[ $(type -P wg-quick) ]] && [[ $WARPIPv6 = plus || $WARPIPv4 = plus || $WARPIPv6 = on || $WARPIPv4 = on ]]; then
 yellow "当前WARP(+)为--已开启状态，现执行:临时关闭……"
 sleep 1s
-wg-quick down wgcf
+wg-quick down wgcf >/dev/null 2>&1
 green "临时关闭WARP(+)成功"
 else
 yellow "当前WARP(+)为--临时关闭状态，现执行:恢复开启……"
@@ -490,12 +489,13 @@ green "恢复开启WARP(+)成功"
 fi
 
 
+[[ ! $(type -P wg-quick) && ! $(type -P warp-cli) ]] && (red "并没有安装任何的WARP功能，无法卸载" && CFwarp.sh) || (cwg && cso && $wgso2 && green "WARP已全部卸载完成");;
+
 un="1.开启或者关闭WGCF WARP代理\n 2.开启或关闭SOCKS5 WARP代理\n 3.开启或者关闭所有WARP（1与2）:"
 readp "$un" uninstall
 case "$uninstall" in  
-1 ) [[ $WARPIPv6 = plus || $WARPIPv4 = plus || $WARPIPv6 = on || $WARPIPv4 = on ]] && (yellow "当前WARP(+)为--已开启状态，现执行:临时关闭……" && wg-quick down wgcf && green "WGCF的WARP关闭完成") || (yellow "当前WARP(+)为--临时关闭状态，现执行:恢复开启……" && systemctl restart wg-quick@wgcf && green "恢复开启WARP(+)成功");;
+1 ) ([[ $(type -P wg-quick) ]] && [[ $WARPIPv6 = plus || $WARPIPv4 = plus || $WARPIPv6 = on || $WARPIPv4 = on ]]) && (yellow "当前WARP(+)为--已开启状态，现执行:临时关闭……" && wg-quick down wgcf && green "WGCF的WARP关闭完成") || (yellow "当前WARP(+)为--临时关闭状态，现执行:恢复开启……" && systemctl restart wg-quick@wgcf && green "恢复开启WARP(+)成功");;
 2 ) [[ $(type -P warp-cli) ]] && (cso && green "SOCKS5的WARP卸载完成") || (yellow "并未安装SOCKS5的WARP，无法卸载" && bash CFwarp.sh);;
-3 ) [[ ! $(type -P wg-quick) && ! $(type -P warp-cli) ]] && (red "并没有安装任何的WARP功能，无法卸载" && CFwarp.sh) || (cwg && cso && $wgso2 && green "WARP已全部卸载完成");;
 esac
 white "============================================================================================="
 white "回主菜单，请按任意键"
@@ -578,7 +578,7 @@ fi
 
 svca=`systemctl is-active warp-svc`
 mport=`netstat -ap | grep warp-svc | awk -F "localhost:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}' | awk 'NR==1' 2>/dev/null`
-if [[ $svca = active ]]; then
+if [[ $(type -P warp-cli) ]]; then
 S5Status=$(curl -sx socks5h://127.0.0.1:$mport www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 case ${S5Status} in 
 plus) 
@@ -587,7 +587,7 @@ S5Status1=$(white " socks5+状态：\c" ; rred "socks5+warp+运行中" ; white "
 on) 
 S5Status1=$(white " socks5状态：\c" ; green "socks5-warp运行中" ; white "socks5端口：\c" ; green "$mport") 
 ;;  
-off) 
+*) 
 S5Status1=$(white " socks5状态：没开启")
 ;;
 esac 
