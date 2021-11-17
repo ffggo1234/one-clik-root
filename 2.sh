@@ -565,6 +565,7 @@ yellow "继续使用原WARP账户请按回车跳过 \n启用WARP+PLUS账户，�
 readtp "按键许可证秘钥(26个字符):" ID
 [[ -n $ID ]] && warp-cli --accept-tos set-license $ID
 
+unset port mport
 yellow "\n等待5秒或者直接回车，则端口为40000"
 readtp "自定义socks5端口:" port
 [[ ! $port ]] && port='40000'
