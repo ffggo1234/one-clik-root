@@ -465,7 +465,6 @@ readp "$un" uninstall
 case "$uninstall" in     
 1 ) [[ $(type -P wg-quick) ]] && (cwg && green "WGCF的WARP卸载完成") || (yellow "并未安装WGCF的WARP，无法卸载" && bash CFwarp.sh);;
 2 ) [[ $(type -P warp-cli) ]] && (cso && green "SOCKS5的WARP卸载完成") || (yellow "并未安装SOCKS5的WARP，无法卸载" && bash CFwarp.sh);;
-
 esac
 }
 
