@@ -485,8 +485,7 @@ sleep 1s
 wg-quick down wgcf >/dev/null 2>&1
 systemctl disable wg-quick@wgcf >/dev/null 2>&1
 green "临时关闭WARP(+)成功"
-fi
-if [[ $(type -P wg-quick) ]] && [[ $WARPIPv6 = off || $WARPIPv4 = off ]]; then
+elif [[ $(type -P wg-quick) ]] && [[ $WARPIPv6 = off || $WARPIPv4 = off ]]; then
 yellow "当前WARP(+)为--临时关闭状态，现执行:恢复开启……"
 sleep 1s
 systemctl restart wg-quick@wgcf >/dev/null 2>&1
