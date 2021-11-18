@@ -472,7 +472,7 @@ esac
 ocwarp(){
 WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 WARPIPv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
-un="1.开启或者关闭WGCF WARP代理\n 2.开启或关闭SOCKS5 WARP代理\n 3.开启或者关闭所有WARP（1与2）:"
+un="1.开启或者关闭WGCF WARP代理\n 2.开启或关闭SOCKS5 WARP代理:"
 readp "$un" uninstall
 case "$uninstall" in  
 1 )
