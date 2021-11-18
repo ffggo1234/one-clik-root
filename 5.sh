@@ -473,9 +473,9 @@ esac
 }
 
 ocwarp(){
+wg(){
 WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 WARPIPv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
-wg(){
 if [[ ! $(type -P wg-quick) ]]; then
 red "WARP(+)未安装，无法启动或关闭，建议重新安装WARP(+)"
 fi
