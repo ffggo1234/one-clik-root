@@ -569,25 +569,23 @@ fi
 
 warp-cli --accept-tos register
 warp-cli --accept-tos set-mode proxy 
-warp-cli --accept-tos connect
-warp-cli --accept-tos enable-always-on
-
 yellow "继续使用原WARP账户请按回车跳过 \n启用WARP+PLUS账户，请复制WARP+的按键许可证秘钥(26个字符)后回车"
 readtp "按键许可证秘钥(26个字符):" ID
 [[ -n $ID ]] && warp-cli --accept-tos set-license $ID
-
-yellow "\n等待5秒或者直接回车，则端口为40000"
-readtp "自定义socks5端口:" port
-[[ ! $port ]] && port='40000'
-if [[ $(netstat -ntlp) =~ ":$port" ]]; then
-until [[ ! $(netstat -ntlp) =~ ":$port" ]]
+yellow "直接回车或5秒后，将继续使用默认端口40000"
+if readtp "请在5秒内输入自定义socks5端口:" port
+then
+if [[ -n $(netstat -ntlp | grep "$port") || -n $(netstat -ntlp | grep '40000') ]]; then
+until [[ -z $(netstat -ntlp | grep "$port") ]]
 do
-[[ $(netstat -ntlp) =~ ":$port" ]] && yellow "\n端口被占用，请重新输入端口" && readp "自定义socks5端口:" port
+[[ -n $(netstat -ntlp | grep "$port") ]] && yellow "\n端口被占用，请重新输入端口" && readp "自定义socks5端口:" port
 done
 fi
+fi
+warp-cli --accept-tos connect
+warp-cli --accept-tos enable-always-on
 [[ -n $port ]] && warp-cli --accept-tos set-proxy-port $port
 
-svca=`systemctl is-active warp-svc`
 mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
 if [[ $(type -P warp-cli) ]]; then
 S5Status=$(curl -sx socks5h://127.0.0.1:$mport www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
