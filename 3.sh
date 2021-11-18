@@ -92,7 +92,7 @@ fi
 
 yellow " 请稍等3秒……正在扫描vps类型及参数中……"
 svca=`systemctl is-active warp-svc`
-mport=`netstat -ap | grep warp-svc | awk -F "localhost:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}' | awk 'NR==1' 2>/dev/null`
+mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
 AE="阿联酋";AU="澳大利亚";BR="巴西";CA="加拿大";CH="瑞士";CL="智利";CN="中国";CO="哥伦比亚";DE="德国";ES="西班牙";FI="芬兰";FR="法国";HK="香港";ID="印度尼西亚";IE="爱尔兰";IL="以色列";IN="印度";IT="意大利";JP="日本";KR="韩国";LU="卢森堡";MX="墨西哥";MY="马来西亚";NL="荷兰";NZ="新西兰";PH="菲律宾";RU="俄罗斯";SA="沙特";SE="瑞典";SG="新加坡";TW="台湾";UK="英国";US="美国";VN="越南";ZA="南非"
 v66=`curl -s6m3 https://ip.gs -k`
 v44=`curl -s4m3 https://ip.gs -k`
@@ -579,16 +579,16 @@ readtp "按键许可证秘钥(26个字符):" ID
 yellow "\n等待5秒或者直接回车，则端口为40000"
 readtp "自定义socks5端口:" port
 [[ ! $port ]] && port='40000'
-if [[ $(netstat -ap) =~ ":$port" ]]; then
-until [[ ! $(netstat -ap) =~ ":$port" ]]
+if [[ $(netstat -ntlp) =~ ":$port" ]]; then
+until [[ ! $(netstat -ntlp) =~ ":$port" ]]
 do
-[[ $(netstat -ap) =~ ":$port" ]] && yellow "\n端口被占用，请重新输入端口" && readp "自定义socks5端口:" port
+[[ $(netstat -ntlp) =~ ":$port" ]] && yellow "\n端口被占用，请重新输入端口" && readp "自定义socks5端口:" port
 done
 fi
 [[ -n $port ]] && warp-cli --accept-tos set-proxy-port $port
 
 svca=`systemctl is-active warp-svc`
-mport=`netstat -ap | grep warp-svc | awk -F "localhost:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}' | awk 'NR==1' 2>/dev/null`
+mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
 if [[ $(type -P warp-cli) ]]; then
 S5Status=$(curl -sx socks5h://127.0.0.1:$mport www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 case ${S5Status} in 
