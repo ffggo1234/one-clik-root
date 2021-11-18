@@ -485,7 +485,8 @@ sleep 1s
 wg-quick down wgcf >/dev/null 2>&1
 systemctl disable wg-quick@wgcf >/dev/null 2>&1
 green "临时关闭WARP(+)成功"
-else
+fi
+if [[ $(type -P wg-quick) ]] && [[ $WARPIPv6 = off || $WARPIPv4 = off ]]; then
 yellow "当前WARP(+)为--临时关闭状态，现执行:恢复开启……"
 sleep 1s
 systemctl restart wg-quick@wgcf >/dev/null 2>&1
@@ -501,7 +502,8 @@ yellow "当前WARP(+)为--已开启状态，现执行:临时关闭……"
 sleep 1s
 warp-cli --accept-tos disable-always-on >/dev/null 2>&1
 green "临时关闭WARP(+)成功"
-elif [[ $(type -P wg-cli) ]] && [[ $(warp-cli --accept-tos status 2>/dev/null) =~ Disconnected ]]; then
+fi
+if [[ $(type -P wg-cli) ]] && [[ $(warp-cli --accept-tos status 2>/dev/null) =~ Disconnected ]]; then
 yellow "当前WARP(+)为--临时关闭状态，现执行:恢复开启……"
 sleep 1s
 warp-cli --accept-tos enable-always-on >/dev/null 2>&1
