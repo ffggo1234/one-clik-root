@@ -478,7 +478,8 @@ WARPIPv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | 
 un="1.开启或者关闭WGCF WARP代理\n 2.开启或关闭SOCKS5 WARP代理:"
 readp "$un" uninstall
 case "$uninstall" in  
-1 ) if [[ ! $(type -P wg-quick) ]]; then
+1 ) input
+if [[ ! $(type -P wg-quick) ]]; then
 red "WARP(+)未安装，无法启动或关闭，建议重新安装WARP(+)"
 fi
 if [[ $(type -P wg-quick) ]] && [[ $WARPIPv6 = plus || $WARPIPv4 = plus || $WARPIPv6 = on || $WARPIPv4 = on ]]; then
@@ -493,7 +494,8 @@ sleep 1s
 systemctl restart wg-quick@wgcf >/dev/null 2>&1
 green "恢复开启WARP(+)成功"
 fi
-2 ) if [[ ! $(type -P warp-cli) ]]; then
+2 ) input
+if [[ ! $(type -P warp-cli) ]]; then
 red "SOCKS5的WARP未安装，无法启动或关闭，建议重新安装WARP(+)"
 fi
 if [[ $(type -P wg-cli) ]] && [[ $(warp-cli --accept-tos status 2>/dev/null) =~ Connected ]]; then
