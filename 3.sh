@@ -135,12 +135,15 @@ fi
 
 if [[ $(type -P warp-cli) ]]; then
 S5Status=$(curl -sx socks5h://127.0.0.1:$mport www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
+S5ip=`curl -sx socks5h://127.0.0.1:$mport ip.gs -k`
+S5gj=`curl -s https://api.ip.sb/geoip/$S5ip -k | awk -F "country_code" '{print $2}' | awk -F "region_code" '{print $1}' | sed "s/[,\":}]//g"`
+S5zgj=$(eval echo \$$S5gj)
 case ${S5Status} in 
 plus) 
-S5Status1=$(white " socks5+状态：\c" ; rred "socks5+warp+运行中" ; white "socks5端口：\c" ; rred "$mport") 
+S5Status1=$(white " socks5+状态：\c" ; rred "socks5+warp+运行中" ; white "socks5端口：\c" ; rred "$mport" ; white "WARP+的IP地址：\c" ; rred "$S5ip" ; white "IP所在区域：\c" ; rred "$S5zgj") 
 ;;  
 on) 
-S5Status1=$(white " socks5状态：\c" ; green "socks5-warp运行中" ; white "socks5端口：\c" ; green "$mport") 
+S5Status1=$(white " socks5状态：\c" ; green "socks5-warp运行中" ; white "socks5端口：\c" ; green "$mport" ; white "WARP+的IP地址：\c" ; green "$S5ip" ; white "IP所在区域：\c" ; green "$S5zgj") 
 ;;  
 *) 
 S5Status1=$(white " socks5状态：没开启")
