@@ -463,7 +463,7 @@ systemctl disable warp-svc >/dev/null 2>&1
 [[ $release = "Centos" ]] && (yum remove cloudflare-warp -y) || (apt purge cloudflare-warp -y && rm -f /etc/apt/sources.list.d/cloudflare-client.list)
 }
 wgso2="rm -rf /usr/local/bin/wgcf /etc/wireguard/wgcf.conf /etc/wireguard/wgcf-account.toml /usr/bin/wireguard-go wgcf-account.toml wgcf-profile.conf ucore.sh nf.sh CFwarp.sh"
-un="1.仅卸载WGCF WARP代理\n 2.仅卸载SOCKS5 WARP代理\n 3.彻底卸载并清除所有WARP及脚本文件:"
+un="1.仅卸载WGCF WARP代理\n 2.仅卸载SOCKS5 WARP代理\n 3.彻底卸载并清除所有WARP及脚本文件\n 请选择："
 readp "$un" uninstall
 case "$uninstall" in     
 1 ) [[ $(type -P wg-quick) ]] && (cwg && green "WGCF的WARP卸载完成") || (yellow "并未安装WGCF的WARP，无法卸载" && bash CFwarp.sh);;
@@ -475,7 +475,7 @@ esac
 ocwarp(){
 WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 WARPIPv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
-un="1.开启或者关闭WGCF WARP代理\n 2.开启或关闭SOCKS5 WARP代理:"
+un="1.开启或者关闭WGCF WARP代理\n 2.开启或关闭SOCKS5 WARP代理\n 请选择："
 readp "$un" uninstall
 case "$uninstall" in  
 1 ) if [[ ! $(type -P wg-quick) ]]; then
