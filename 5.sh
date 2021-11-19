@@ -643,27 +643,7 @@ fi
 esac
 warp-cli --accept-tos connect
 warp-cli --accept-tos enable-always-on
-
-systemctl restart warp-svc
-mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
-if [[ $(type -P warp-cli) ]]; then
-S5Status=$(curl -sx socks5h://127.0.0.1:$mport www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
-case ${S5Status} in 
-plus) 
-S5Status1=$(white " socks5+状态：\c" ; rred "socks5+warp+运行中" ; white "socks5端口：\c" ; rred "$mport") 
-;;  
-on) 
-S5Status1=$(white " socks5状态：\c" ; green "socks5-warp运行中" ; white "socks5端口：\c" ; green "$mport") 
-;;  
-*) 
-S5Status1=$(white " socks5状态：没开启")
-;;
-esac 
-else
-S5Status1=$(red "socks5状态：未安装")
-fi
-white " 当前socks5接管出站流量情况如下"
-blue " ${S5Status1}"
+cli
 }
 
 start_menu(){
