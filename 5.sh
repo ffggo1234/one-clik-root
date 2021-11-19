@@ -64,7 +64,6 @@ sys(){
 [ -f /etc/os-release ] && awk -F'[= "]' '/PRETTY_NAME/{print $3,$4,$5}' /etc/os-release && return
 [ -f /etc/lsb-release ] && awk -F'[="]+' '/DESCRIPTION/{print $2}' /etc/lsb-release && return
 }
-op=`sys`
 vi=`systemd-detect-virt`
 vsid=`grep -i version_id /etc/os-release | cut -d \" -f2 | cut -d . -f1`
 if [ $release = "Centos" ] && [[ ${vsid} -lt 7 ]]; then
@@ -163,7 +162,7 @@ c5="sed -i 's/1.1.1.1/8.8.8.8,2001:4860:4860::8888/g' wgcf-profile.conf"
 c6="sed -i 's/1.1.1.1/2001:4860:4860::8888,8.8.8.8/g' wgcf-profile.conf"
 
 Print_ALL_Status_menu() {
-white " 操作系统名称: $(blue "$op")"
+white " 操作系统名称: $(blue "$sys")"
 white " 系统内核版本: $(blue "$version")" 
 white " CPU架构名称 : $(blue "$bit")"
 white " 虚拟架构类型: $(blue "$vi")"
