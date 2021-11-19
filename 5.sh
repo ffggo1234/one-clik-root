@@ -457,8 +457,8 @@ systemctl disable wg-quick@wgcf --now >/dev/null 2>&1
 cso(){
 warp-cli --accept-tos disconnect >/dev/null 2>&1
 warp-cli --accept-tos delete >/dev/null 2>&1
+systemctl disable warp-svc >/dev/null 2>&1
 [[ $release = "Centos" ]] && (yum remove cloudflare-warp -y) || (apt purge cloudflare-warp -y && rm -f /etc/apt/sources.list.d/cloudflare-client.list)
-systemctl disable warp-svc --now >/dev/null 2>&1
 }
 wgso2="rm -rf /usr/local/bin/wgcf /etc/wireguard/wgcf.conf /etc/wireguard/wgcf-account.toml /usr/bin/wireguard-go wgcf-account.toml wgcf-profile.conf ucore.sh nf.sh CFwarp.sh"
 un="1.仅卸载WGCF WARP代理\n 2.仅卸载SOCKS5 WARP代理\n 3.彻底卸载并清除所有WARP及脚本文件\n 请选择："
