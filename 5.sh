@@ -616,6 +616,7 @@ readp "$un" STP
 case "$STP" in 
 1 )
 warp-cli --accept-tos disable-always-on
+warp-cli --accept-tos delete
 warp-cli --accept-tos register
 ;;
 2 )
