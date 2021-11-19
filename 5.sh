@@ -538,8 +538,9 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/kkkyg/CFwarp/ma
 
 socks5(){
 WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
-[[ ! ${bit} = "x86_64" ]] && red "目前不支持arm架构的CPU" && exit 1
-[[ $WARPIPv4 = plus || $WARPIPv4 = on ]] && red "目前不支持已开启wgcf的ipv4" && exit 1 
+[[ ! ${bit} = "x86_64" ]] && red "目前不支持arm架构的CPU" && bash CFwarp.sh
+[[ $WARPIPv4 = plus || $WARPIPv4 = on ]] && red "目前不支持已开启wgcf的ipv4" && bash CFwarp.sh 
+[[ $(type -P warp-cli) ]] && red "当前SOCKS5 WARP已经在运行中" && bash CFwarp.sh
 systemctl stop wg-quick@wgcf >/dev/null 2>&1
 v44=`curl -s4m3 https://ip.gs -k`
 v66=`curl -s6m3 https://ip.gs -k`
