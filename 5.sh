@@ -496,12 +496,12 @@ so(){
 if [[ ! $(type -P warp-cli) ]]; then
 red "SOCKS5的WARP未安装，无法启动或关闭，建议重新安装WARP(+)"
 fi
-if [[ $(type -P wg-cli) ]] && [[ $(type -P (warp-cli --accept-tos status 2>/dev/null | grep Connected)) ]]; then
+if [[ $(type -P warp-cli) ]] && [[ $(type -P (warp-cli --accept-tos status 2>/dev/null | grep Connected)) ]]; then
 yellow "当前WARP(+)为--已开启状态，现执行:临时关闭……"
 sleep 1s
 warp-cli --accept-tos disable-always-on >/dev/null 2>&1
 green "临时关闭WARP(+)成功"
-elif [[ $(type -P wg-cli) ]] && [[ $(type -P (warp-cli --accept-tos status 2>/dev/null | grep Disconnected)) ]]; then
+elif [[ $(type -P warp-cli) ]] && [[ $(type -P (warp-cli --accept-tos status 2>/dev/null | grep Disconnected)) ]]; then
 yellow "当前WARP(+)为--临时关闭状态，现执行:恢复开启……"
 sleep 1s
 warp-cli --accept-tos enable-always-on >/dev/null 2>&1
