@@ -627,8 +627,7 @@ readtp "按键许可证秘钥(26个字符):" ID
 ;;
 3 )
 warp-cli --accept-tos disable-always-on
-yellow "直接回车或5秒后，将继续使用默认端口40000"
-if readtp "请在5秒内输入自定义socks5端口:" port
+if readp "请输入自定义socks5端口:" port
 then
 if [[ -n $(netstat -ntlp | grep "$port") ]]; then
 until [[ -z $(netstat -ntlp | grep "$port") ]]
