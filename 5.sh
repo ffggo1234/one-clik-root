@@ -611,7 +611,7 @@ blue " ${S5Status1}"
 }
 
 changportip(){
-[[ ! $(type -P warp-cli) ]] && red "SOCKS5的WARP未安装，建议重新安装WARP(+)"
+[[ ! $(type -P warp-cli) ]] && red "SOCKS5的WARP未安装，建议重新安装WARP(+)" && bash CFwarp.sh
 un="1.换SOCKS5的IP\n 2.升级SOCKS5+账户\n 3.更改SOCKS5端口\n 请选择："
 readp "$un" STP
 case "$STP" in 
