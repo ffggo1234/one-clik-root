@@ -612,19 +612,21 @@ blue " ${S5Status1}"
 
 changportip(){
 [[ ! $(type -P warp-cli) ]] && red "SOCKS5的WARP未安装，建议重新安装WARP(+)"
-[[ $(type -P warp-cli) && $(warp-cli --accept-tos status | grep 'Status update:' | awk '{print $3}') = Disconnected ]] || red "请先关闭SOCKS5" 
 un="1.换SOCKS5的IP\n 2.升级SOCKS5+账户\n 3.更改SOCKS5端口\n 请选择："
 readp "$un" STP
 case "$STP" in 
 1 )
+warp-cli --accept-tos disable-always-on
 warp-cli --accept-tos register
 ;;
 2 )
+warp-cli --accept-tos disable-always-on
 yellow "继续使用原WARP账户请按回车跳过 \n启用WARP+PLUS账户，请复制WARP+的按键许可证秘钥(26个字符)后回车"
 readtp "按键许可证秘钥(26个字符):" ID
 [[ -n $ID ]] && warp-cli --accept-tos set-license $ID
 ;;
 3 )
+warp-cli --accept-tos disable-always-on
 yellow "直接回车或5秒后，将继续使用默认端口40000"
 if readtp "请在5秒内输入自定义socks5端口:" port
 then
@@ -638,6 +640,8 @@ fi
 [[ -n $port ]] && warp-cli --accept-tos set-proxy-port $port
 ;;
 esac
+warp-cli --accept-tos connect
+warp-cli --accept-tos enable-always-on
 
 mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
 if [[ $(type -P warp-cli) ]]; then
