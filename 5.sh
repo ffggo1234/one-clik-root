@@ -610,6 +610,57 @@ white " 当前socks5接管出站流量情况如下"
 blue " ${S5Status1}"
 }
 
+changportip(){
+if [[ ! $(type -P warp-cli) ]]; then
+red "SOCKS5的WARP未安装，建议重新安装WARP(+)"
+fi
+
+1 )
+if [[ $(type -P warp-cli) ]] && [[ $(warp-cli --accept-tos status | grep 'Status update:' | awk '{print $3}') = Disconnected ]]; then
+warp-cli --accept-tos register
+fi;;
+
+2 )
+yellow "继续使用原WARP账户请按回车跳过 \n启用WARP+PLUS账户，请复制WARP+的按键许可证秘钥(26个字符)后回车"
+readtp "按键许可证秘钥(26个字符):" ID
+[[ -n $ID ]] && warp-cli --accept-tos set-license $ID
+;;
+3 )
+yellow "直接回车或5秒后，将继续使用默认端口40000"
+if readtp "请在5秒内输入自定义socks5端口:" port
+then
+if [[ -n $(netstat -ntlp | grep "$port") ]]; then
+until [[ -z $(netstat -ntlp | grep "$port") ]]
+do
+[[ -n $(netstat -ntlp | grep "$port") ]] && yellow "\n端口被占用，请重新输入端口" && readp "自定义socks5端口:" port
+done
+fi
+fi
+[[ -n $port ]] && warp-cli --accept-tos set-proxy-port $port
+;;
+
+mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
+if [[ $(type -P warp-cli) ]]; then
+S5Status=$(curl -sx socks5h://127.0.0.1:$mport www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
+case ${S5Status} in 
+plus) 
+S5Status1=$(white " socks5+状态：\c" ; rred "socks5+warp+运行中" ; white "socks5端口：\c" ; rred "$mport") 
+;;  
+on) 
+S5Status1=$(white " socks5状态：\c" ; green "socks5-warp运行中" ; white "socks5端口：\c" ; green "$mport") 
+;;  
+*) 
+S5Status1=$(white " socks5状态：没开启")
+;;
+esac 
+else
+S5Status1=$(red "socks5状态：未安装")
+fi
+
+white " 当前socks5接管出站流量情况如下"
+blue " ${S5Status1}"
+}
+
 start_menu(){
 WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 WARPIPv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
@@ -644,6 +695,7 @@ green " 10. 无限刷取WARP+PLUS账户流量 "
 green " 11. 无限刷新并修复WARP的IP"    
 green " 12. 开启或关闭WARP功能 "
 green " 13. 彻底卸载WARP功能 "
+green " 15. 测试"
 white " ==================三、代理协议脚本选择（更新中）==========================================="
 green " 14.使用mack-a脚本（支持Xray, V2ray） "
 white " ============================================================================================="
@@ -669,6 +721,7 @@ case "$menuNumberInput" in
 12 ) ocwarp;;
 13 ) cwarp;;
 14 ) macka;;
+15 ）changportip
  0 ) exit 0;;
 esac
   
