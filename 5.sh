@@ -451,14 +451,13 @@ get_char && bash CFwarp.sh
 cwarp(){
 cwg(){
 wg-quick down wgcf >/dev/null 2>&1
-systemctl stop wg-quick@wgcf >/dev/null 2>&1
-systemctl disable wg-quick@wgcf >/dev/null 2>&1
+systemctl disable wg-quick@wgcf --now >/dev/null 2>&1
 [[ $release = "Centos" ]] && (yum -y autoremove wireguard-tools wireguard-dkms) || (apt -y autoremove wireguard-tools wireguard-dkms)
 }
 cso(){
 warp-cli --accept-tos disconnect >/dev/null 2>&1
-systemctl stop warp-svc >/dev/null 2>&1
-systemctl disable warp-svc >/dev/null 2>&1
+warp-cli --accept-tos delete >/dev/null 2>&1
+systemctl disable warp-svc --now >/dev/null 2>&1
 [[ $release = "Centos" ]] && (yum remove cloudflare-warp -y) || (apt purge cloudflare-warp -y && rm -f /etc/apt/sources.list.d/cloudflare-client.list)
 }
 wgso2="rm -rf /usr/local/bin/wgcf /etc/wireguard/wgcf.conf /etc/wireguard/wgcf-account.toml /usr/bin/wireguard-go wgcf-account.toml wgcf-profile.conf ucore.sh nf.sh CFwarp.sh"
@@ -587,7 +586,7 @@ fi
 warp-cli --accept-tos connect
 warp-cli --accept-tos enable-always-on
 [[ -n $port ]] && warp-cli --accept-tos set-proxy-port $port
-systemctl restart warp-cli
+systemctl restart warp-cli --now
 mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
 if [[ $(type -P warp-cli) ]]; then
 S5Status=$(curl -sx socks5h://127.0.0.1:$mport www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
@@ -642,7 +641,7 @@ esac
 warp-cli --accept-tos connect
 warp-cli --accept-tos enable-always-on
 
-systemctl restart warp-cli
+systemctl restart warp-cli --now
 mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
 if [[ $(type -P warp-cli) ]]; then
 S5Status=$(curl -sx socks5h://127.0.0.1:$mport www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
