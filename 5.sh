@@ -720,7 +720,7 @@ case "$menuNumberInput" in
 12 ) ocwarp;;
 13 ) cwarp;;
 14 ) macka;;
-15 ）changportip;;
+15 ) changportip;;
  0 ) exit 0;;
 esac
   
