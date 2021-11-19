@@ -577,7 +577,7 @@ readtp "按键许可证秘钥(26个字符):" ID
 yellow "直接回车或5秒后，将继续使用默认端口40000"
 if readtp "请在5秒内输入自定义socks5端口:" port
 then
-if [[ -n $(netstat -ntlp | grep "$port") || -n $(netstat -ntlp | grep '40000') ]]; then
+if [[ -n $(netstat -ntlp | grep "$port") ]]; then
 until [[ -z $(netstat -ntlp | grep "$port") ]]
 do
 [[ -n $(netstat -ntlp | grep "$port") ]] && yellow "\n端口被占用，请重新输入端口" && readp "自定义socks5端口:" port
