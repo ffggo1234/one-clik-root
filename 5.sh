@@ -91,7 +91,6 @@ fi
 
 yellow " 请稍等3秒……正在扫描vps类型及参数中……"
 svca=`systemctl is-active warp-svc`
-mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
 AE="阿联酋";AU="澳大利亚";BR="巴西";CA="加拿大";CH="瑞士";CL="智利";CN="中国";CO="哥伦比亚";DE="德国";ES="西班牙";FI="芬兰";FR="法国";HK="香港";ID="印度尼西亚";IE="爱尔兰";IL="以色列";IN="印度";IT="意大利";JP="日本";KR="韩国";LU="卢森堡";MX="墨西哥";MY="马来西亚";NL="荷兰";NZ="新西兰";PH="菲律宾";RU="俄罗斯";SA="沙特";SE="瑞典";SG="新加坡";TW="台湾";UK="英国";US="美国";VN="越南";ZA="南非"
 v66=`curl -s6m3 https://ip.gs -k`
 v44=`curl -s4m3 https://ip.gs -k`
@@ -133,6 +132,7 @@ WARPIPv6Status=$(red "不存在IPV6地址 ")
 fi 
 
 if [[ $(type -P warp-cli) ]]; then
+mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
 S5Status=$(curl -sx socks5h://127.0.0.1:$mport www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 S5ip=`curl -sx socks5h://127.0.0.1:$mport ip.gs -k`
 S5gj=`curl -s https://api.ip.sb/geoip/$S5ip -k | awk -F "country_code" '{print $2}' | awk -F "region_code" '{print $1}' | sed "s/[,\":}]//g"`
