@@ -642,6 +642,7 @@ esac
 warp-cli --accept-tos connect
 warp-cli --accept-tos enable-always-on
 
+systemctl restart warp-cli.service
 mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
 if [[ $(type -P warp-cli) ]]; then
 S5Status=$(curl -sx socks5h://127.0.0.1:$mport www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
