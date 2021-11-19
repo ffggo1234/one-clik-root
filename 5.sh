@@ -30,7 +30,6 @@ readp(){
 	read -p "$(green "$1")" $2
 }
 
-
 if [[ $EUID -ne 0 ]]; then
 yellow "请以root模式运行脚本。"
 exit 1
@@ -182,7 +181,7 @@ blue " ${WARPIPv6Status}"
 white "=========================================="
 }
 
-get_char() {
+get_char(){
 SAVEDSTTY=`stty -g`
 stty -echo
 stty cbreak
@@ -380,7 +379,7 @@ blue " ${WARPIPv6Status}"
 white "=========================================="
 white " 回主菜单，请按任意键"
 white " 退出脚本，请按Ctrl+C"
-char=$(get_char) && bash CFwarp.sh
+get_char && bash CFwarp.sh
 }
 
 warpip(){
@@ -394,7 +393,7 @@ fi
 white "============================================================================================="
 white "回主菜单，请按任意键"
 white "退出脚本，请按Ctrl+C"
-char=$(get_char) && bash CFwarp.sh
+get_char && bash CFwarp.sh
 }
 
 warpplus(){
@@ -446,7 +445,7 @@ fi
 white "============================================================================================="
 white "回主菜单，请按任意键"
 white "退出脚本，请按Ctrl+C"
-char=$(get_char) && bash CFwarp.sh
+get_char && bash CFwarp.sh
 }
 
 cwarp(){
@@ -513,7 +512,7 @@ esac
 white "============================================================================================="
 white "回主菜单，请按任意键"
 white "退出脚本，请按Ctrl+C"
-char=$(get_char) && bash CFwarp.sh
+get_char && bash CFwarp.sh
 }
 
 macka(){
@@ -529,7 +528,7 @@ wget -N --no-check-certificate https://cdn.jsdelivr.net/gh/missuo/SimpleNetflix/
 white "============================================================================================="
 white "回主菜单，请按任意键"
 white "退出脚本，请按Ctrl+C"
-char=$(get_char) && bash CFwarp.sh
+get_char && bash CFwarp.sh
 }
 
 up4(){
