@@ -669,12 +669,12 @@ WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | 
 WARPIPv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 if [[ $WARPIPv6 = plus || $WARPIPv4 = plus || $WARPIPv6 = on || $WARPIPv4 = on ]]; then
 systemctl stop wg-quick@wgcf >/dev/null 2>&1
-v44=`curl -s4m3 https://ip.gs -k`
-v66=`curl -s6m3 https://ip.gs -k`
+v44=`ip route get 162.159.192.1 2>/dev/null | grep -oP 'src \K\S+'`
+v66=`ip route get 2606:4700:d0::a29f:c001 2>/dev/null | grep -oP 'src \K\S+'`
 systemctl start wg-quick@wgcf >/dev/null 2>&1
 else
-v44=`curl -s4m3 https://ip.gs -k`
-v66=`curl -s6m3 https://ip.gs -k`
+v44=`ip route get 162.159.192.1 2>/dev/null | grep -oP 'src \K\S+'`
+v66=`ip route get 2606:4700:d0::a29f:c001 2>/dev/null | grep -oP 'src \K\S+'`
 fi
 if [[ -n ${v44} && -n ${v66} ]]; then 
 clear
