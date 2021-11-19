@@ -622,7 +622,7 @@ warp-cli --accept-tos register
 2 )
 warp-cli --accept-tos disable-always-on
 yellow "继续使用原WARP账户请按回车跳过 \n启用WARP+PLUS账户，请复制WARP+的按键许可证秘钥(26个字符)后回车"
-readtp "按键许可证秘钥(26个字符):" ID
+readp "按键许可证秘钥(26个字符):" ID
 [[ -n $ID ]] && warp-cli --accept-tos set-license $ID
 ;;
 3 )
