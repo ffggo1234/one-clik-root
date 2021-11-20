@@ -268,7 +268,7 @@ yellow "继续使用原WARP账户请等待5秒或按回车跳过 \n启用WARP+PL
 readtp "按键许可证秘钥(26个字符):" ID
 if [[ -n $ID ]]; then
 sed -i "s/license_key.*/license_key = \"$ID\"/g" wgcf-account.toml
-wgcf update $SBID > /etc/wireguard/SBID.log 2>&1
+wgcf update $SBID > /etc/wireguard/WG+ID.log 2>&1
 green "启用WARP+PLUS账户中，如上方显示：400 Bad Request，则使用原WARP账户,相关原因请看本项目Github说明" 
 fi
 wgcf generate 
@@ -571,14 +571,14 @@ warp-cli --accept-tos register
 warp-cli --accept-tos set-mode proxy 
 yellow "继续使用原WARP账户请按回车跳过 \n启用WARP+PLUS账户，请复制WARP+的按键许可证秘钥(26个字符)后回车"
 readtp "按键许可证秘钥(26个字符):" ID
-[[ -n $ID ]] && warp-cli --accept-tos set-license $ID
+[[ -n $ID ]] && warp-cli --accept-tos set-license $ID > /etc/wireguard/S5+ID.log 2>&1
 yellow "直接回车或5秒后，将继续使用默认端口40000"
 if readtp "请在5秒内输入自定义socks5端口:" port
 then
-if [[ -n $(netstat -ntlp | grep "$port") ]]; then
-until [[ -z $(netstat -ntlp | grep "$port") ]]
+if [[ -n $(netstat -ntlp | grep ":$port") ]]; then
+until [[ -z $(netstat -ntlp | grep ":$port") ]]
 do
-[[ -n $(netstat -ntlp | grep "$port") ]] && yellow "\n端口被占用，请重新输入端口" && readp "自定义socks5端口:" port
+[[ -n $(netstat -ntlp | grep ":$port") ]] && yellow "\n端口被占用，请重新输入端口" && readp "自定义socks5端口:" port
 done
 fi
 fi
