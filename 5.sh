@@ -586,8 +586,8 @@ warp-cli --accept-tos connect
 warp-cli --accept-tos enable-always-on
 [[ -n $port ]] && warp-cli --accept-tos set-proxy-port $port
 
-mport=`warp-cli --accept-tos settings | grep 'Proxy listening on' | awk -F "127.0.0.1:" '{print $2}'`
 if [[ $(type -P warp-cli) ]]; then
+mport=`warp-cli --accept-tos settings | grep 'Proxy listening on' | awk -F "127.0.0.1:" '{print $2}'`
 S5Status=$(curl -sx socks5h://localhost:$mport https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 case ${S5Status} in 
 plus) 
@@ -603,7 +603,6 @@ esac
 else
 S5Status1=$(red "socks5状态：未安装")
 fi
-
 white " 当前socks5接管出站流量情况如下"
 blue " ${S5Status1}"
 }
