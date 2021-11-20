@@ -647,7 +647,7 @@ sed -i "s/license_key.*/license_key = \"$ID\"/g" wgcf-account.toml
 wgcf update $SBID > /etc/wireguard/SBID.log 2>&1
 green "启用WARP+PLUS账户中，如上方显示：400 Bad Request，则使用原WARP账户,相关原因请看本项目Github说明" 
 wgcf generate
-sed -i "2s/.*/$(sed -ne 2p wgcf-profile.conf)/;3s/.*/$(sed -ne 3p wgcf-profile.conf)/;4s/.*/$(sed -ne 4p wgcf-profile.conf)/" wgcf.conf
+sed -i "2s#.*#$(sed -ne 2p wgcf-profile.conf)#;3s#.*#$(sed -ne 3p wgcf-profile.conf)#;4s#.*#$(sed -ne 4p wgcf-profile.conf)#" wgcf.conf
 wg-quick down wgcf >/dev/null 2>&1
 systemctl restart wg-quick@wgcf >/dev/null 2>&1
 WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
