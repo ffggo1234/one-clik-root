@@ -615,12 +615,16 @@ un="1.换SOCKS5的IP\n 2.升级SOCKS5+账户\n 3.更改SOCKS5端口\n 请选择�
 readp "$un" STP
 case "$STP" in 
 1 )
+white " 当前socks5的warp ip"
+mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
+S5ip=`curl -sx socks5h://127.0.0.1:$mport ip.gs -k`
+blue "$S5ip"
 warp-cli --accept-tos disable-always-on
 warp-cli --accept-tos delete
 warp-cli --accept-tos register
 warp-cli --accept-tos connect
 warp-cli --accept-tos enable-always-on
-white " 当前socks5接管出站流量情况如下"
+white " 当前socks5的warp ip"
 mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
 S5ip=`curl -sx socks5h://127.0.0.1:$mport ip.gs -k`
 blue "$S5ip"
@@ -634,6 +638,9 @@ warp-cli --accept-tos connect
 warp-cli --accept-tos enable-always-on
 ;;
 3 )
+white " 当前socks5端口："
+mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
+blue "$mport"
 warp-cli --accept-tos disable-always-on
 if readp "请输入自定义socks5端口:" port
 then
@@ -647,9 +654,9 @@ fi
 [[ -n $port ]] && warp-cli --accept-tos set-proxy-port $port
 warp-cli --accept-tos connect
 warp-cli --accept-tos enable-always-on
-white " 当前socks5接管出站流量情况如下"
+white " 当前socks5端口："
 mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
-blus "$mport"
+blue "$mport"
 ;;
 esac
 }
