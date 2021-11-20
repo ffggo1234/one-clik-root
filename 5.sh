@@ -589,7 +589,7 @@ warp-cli --accept-tos enable-always-on
 systemctl restart warp-svc
 mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
 if [[ $(type -P warp-cli) ]]; then
-S5Status=$(curl -sx socks5://127.0.0.1:$mport https://1.1.1.1/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
+S5Status=$(curl -sx socks5h://localhost:$mport https://1.1.1.1/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 case ${S5Status} in 
 plus) 
 S5Status1=$(white " socks5+状态：\c" ; rred "socks5+warp+运行中" ; white "socks5端口：\c" ; rred "$mport") 
@@ -617,7 +617,7 @@ case "$STP" in
 1 )
 white " 当前socks5的warp ip"
 mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
-S5ip=`curl -sx socks5://localhost:$mport ip.gs -k`
+S5ip=`curl -sx socks5h://localhost:$mport ip.gs -k`
 blue "$S5ip"
 warp-cli --accept-tos disable-always-on
 warp-cli --accept-tos delete
@@ -626,7 +626,7 @@ warp-cli --accept-tos connect
 warp-cli --accept-tos enable-always-on
 white " 当前socks5的warp ip"
 mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
-S5ip=`curl -sx socks5://localhost:$mport ip.gs -k`
+S5ip=`curl -sx socks5h://localhost:$mport ip.gs -k`
 blue "$S5ip"
 ;;
 2 )
