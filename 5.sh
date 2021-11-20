@@ -574,7 +574,7 @@ yellow "继续使用原WARP账户请按回车跳过 \n启用WARP+PLUS账户，�
 readtp "按键许可证秘钥(26个字符):" ID
 [[ -n $ID ]] && warp-cli --accept-tos set-license $ID
 yellow "直接回车或5秒后，将继续使用默认端口40000"
-if readtp "请在5秒内输入自定义socks5端口:" port
+if readtp "请在5秒内输入自定义socks5端口(1024～65535):" port
 then
 if [[ -n $(netstat -ntlp | grep ":$port") ]]; then
 until [[ -z $(netstat -ntlp | grep ":$port") ]]
@@ -672,7 +672,7 @@ white " 当前socks5端口："
 mport=`warp-cli --accept-tos settings | grep 'Proxy listening on' | awk -F "127.0.0.1:" '{print $2}'`
 blue "$mport"
 warp-cli --accept-tos disable-always-on
-if readp "请输入自定义socks5端口:" port
+if readp "请输入自定义socks5端口(1024～65535):" port
 then
 if [[ -n $(netstat -ntlp | grep "$port") ]]; then
 until [[ -z $(netstat -ntlp | grep "$port") ]]
