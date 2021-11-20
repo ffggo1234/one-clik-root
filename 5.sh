@@ -571,7 +571,7 @@ warp-cli --accept-tos register
 warp-cli --accept-tos set-mode proxy 
 yellow "继续使用原WARP账户请按回车跳过 \n启用WARP+PLUS账户，请复制WARP+的按键许可证秘钥(26个字符)后回车"
 readtp "按键许可证秘钥(26个字符):" ID
-[[ -n $ID ]] && warp-cli --accept-tos set-license $ID > /etc/wireguard/S5+ID.log 2>&1
+[[ -n $ID ]] && warp-cli --accept-tos set-license $ID
 yellow "直接回车或5秒后，将继续使用默认端口40000"
 if readtp "请在5秒内输入自定义socks5端口:" port
 then
