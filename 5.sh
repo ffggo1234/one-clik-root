@@ -618,12 +618,16 @@ case "$STP" in
 warp-cli --accept-tos disable-always-on
 warp-cli --accept-tos delete
 warp-cli --accept-tos register
+warp-cli --accept-tos connect
+warp-cli --accept-tos enable-always-on
 ;;
 2 )
 warp-cli --accept-tos disable-always-on
 yellow "继续使用原WARP账户请按回车跳过 \n启用WARP+PLUS账户，请复制WARP+的按键许可证秘钥(26个字符)后回车"
 readp "按键许可证秘钥(26个字符):" ID
 [[ -n $ID ]] && warp-cli --accept-tos set-license $ID
+warp-cli --accept-tos connect
+warp-cli --accept-tos enable-always-on
 ;;
 3 )
 warp-cli --accept-tos disable-always-on
@@ -637,11 +641,10 @@ done
 fi
 fi
 [[ -n $port ]] && warp-cli --accept-tos set-proxy-port $port
-;;
-esac
 warp-cli --accept-tos connect
 warp-cli --accept-tos enable-always-on
-$cli
+;;
+esac
 }
 
 start_menu(){
