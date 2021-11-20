@@ -620,6 +620,10 @@ warp-cli --accept-tos delete
 warp-cli --accept-tos register
 warp-cli --accept-tos connect
 warp-cli --accept-tos enable-always-on
+white " 当前socks5接管出站流量情况如下"
+mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
+S5ip=`curl -sx socks5h://127.0.0.1:$mport ip.gs -k`
+blue "$S5ip"
 ;;
 2 )
 warp-cli --accept-tos disable-always-on
@@ -643,6 +647,9 @@ fi
 [[ -n $port ]] && warp-cli --accept-tos set-proxy-port $port
 warp-cli --accept-tos connect
 warp-cli --accept-tos enable-always-on
+white " 当前socks5接管出站流量情况如下"
+mport=`netstat -ntlp | grep warp-svc | awk -F "127.0.0.1:" '{print $2}' | awk -F "0.0.0.0:*" '{print $1}'`
+blus "$mport"
 ;;
 esac
 }
