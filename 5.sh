@@ -643,7 +643,7 @@ fi
 esac
 warp-cli --accept-tos connect
 warp-cli --accept-tos enable-always-on
-cli
+$cli
 }
 
 start_menu(){
