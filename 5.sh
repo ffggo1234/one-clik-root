@@ -192,7 +192,7 @@ stty $SAVEDSTTY
 
 ins(){
 systemctl stop wg-quick@wgcf >/dev/null 2>&1
-rm -rf /usr/local/bin/wgcf /etc/wireguard/wgcf.conf /etc/wireguard/wgcf-account.toml /usr/bin/wireguard-go wgcf-account.toml wgcf-profile.conf
+rm -rf /usr/local/bin/wgcf /etc/wireguard/wgcf.conf /etc/wireguard/wgcf-profile.conf /etc/wireguard/wgcf-account.toml /usr/bin/wireguard-go wgcf-account.toml wgcf-profile.conf 
 
 if [[ ${vi} == "lxc" || ${vi} == "openvz" ]]; then
 yellow "正在检测lxc/openvz架构的vps是否开启TUN………！"
@@ -310,8 +310,9 @@ echo $ABC2 | sh
 echo $ABC3 | sh
 echo $ABC4 | sh
 
-mv -f wgcf-profile.conf /etc/wireguard/wgcf.conf >/dev/null 2>&1
-mv -f wgcf-account.toml /etc/wireguard/wgcf-account.toml >/dev/null 2>&1
+cp -f wgcf-profile.conf /etc/wireguard/wgcf.conf >/dev/null 2>&1
+mv -f wgcf-profile.conf /etc/wireguard >/dev/null 2>&1
+mv -f wgcf-account.toml /etc/wireguard >/dev/null 2>&1
 yellow "请稍等3秒，获取WARP(+)IP中…………"
 wg-quick up wgcf >/dev/null 2>&1
 v4=$(curl -s4m3 https://ip.gs -k)
@@ -459,7 +460,7 @@ warp-cli --accept-tos delete >/dev/null 2>&1
 systemctl disable warp-svc >/dev/null 2>&1
 [[ $release = "Centos" ]] && (yum remove cloudflare-warp -y) || (apt purge cloudflare-warp -y && rm -f /etc/apt/sources.list.d/cloudflare-client.list)
 }
-wgso2="rm -rf /usr/local/bin/wgcf /etc/wireguard/wgcf.conf /etc/wireguard/wgcf-account.toml /usr/bin/wireguard-go wgcf-account.toml wgcf-profile.conf ucore.sh nf.sh CFwarp.sh"
+wgso2="rm -rf /usr/local/bin/wgcf /etc/wireguard/wgcf.conf /etc/wireguard/wgcf-profile.conf /etc/wireguard/wgcf-account.toml /usr/bin/wireguard-go wgcf-account.toml wgcf-profile.conf ucore.sh nf.sh CFwarp.sh"
 un="1.仅卸载WGCF WARP代理\n 2.仅卸载SOCKS5 WARP代理\n 3.彻底卸载并清除所有WARP及脚本文件\n 请选择："
 readp "$un" uninstall
 case "$uninstall" in     
@@ -609,7 +610,7 @@ blue " ${S5Status1}"
 
 changportip(){
 [[ ! $(type -P warp-cli) ]] && red "SOCKS5的WARP未安装，建议重新安装WARP(+)" && bash CFwarp.sh
-un="1.换SOCKS5的IP\n 2.升级SOCKS5+账户\n 3.更改SOCKS5端口\n 请选择："
+un="1.换SOCKS5的IP\n 2.升级SOCKS5+账户\n 3.升级WGCF+账户\n 4.更改SOCKS5端口\n 请选择："
 readp "$un" STP
 case "$STP" in 
 1 )
@@ -629,13 +630,31 @@ blue "$S5ip"
 ;;
 2 )
 warp-cli --accept-tos disable-always-on
-yellow "继续使用原WARP账户请按回车跳过 \n启用WARP+PLUS账户，请复制WARP+的按键许可证秘钥(26个字符)后回车"
+yellow "启用WARP+PLUS账户，请复制WARP+的按键许可证秘钥(26个字符)后回车"
 readp "按键许可证秘钥(26个字符):" ID
 [[ -n $ID ]] && warp-cli --accept-tos set-license $ID
 warp-cli --accept-tos connect
 warp-cli --accept-tos enable-always-on
+mport=`warp-cli --accept-tos settings | grep 'Proxy listening on' | awk -F "127.0.0.1:" '{print $2}'`
+S5Status=$(curl -sx socks5h://localhost:$mport https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+[[ $S5Status = plus ]] && green "已升级为SOCKS5+账号\n WGCF+账号剩余流量：$((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000))GB"
 ;;
 3 )
+cd /etc/wireguard
+yellow "启用WARP+PLUS账户，请粘贴WARP+的按键许可证秘钥(26个字符)并回车"
+readp "按键许可证秘钥(26个字符):" ID
+sed -i "s/license_key.*/license_key = \"$ID\"/g" wgcf-account.toml
+wgcf update $SBID > /etc/wireguard/SBID.log 2>&1
+green "启用WARP+PLUS账户中，如上方显示：400 Bad Request，则使用原WARP账户,相关原因请看本项目Github说明" 
+wgcf generate
+sed -i "2s/.*/$(sed -ne 2p wgcf-profile.conf)/;3s/.*/$(sed -ne 3p wgcf-profile.conf)/;4s/.*/$(sed -ne 4p wgcf-profile.conf)/" wgcf.conf
+wg-quick down wgcf >/dev/null 2>&1
+systemctl restart wg-quick@wgcf >/dev/null 2>&1
+WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
+WARPIPv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
+[[ $WARPIPv6 = plus || $WARPIPv4 = plus ]] && green "已升级为WGCF+账号\n WGCF+账号设备名称：$(grep -s 'Device name' /etc/wireguard/SBID.log | awk '{ print $NF }')\n WGCF+账号剩余流量：$(grep -s Quota /etc/wireguard/SBID.log | awk '{ print $(NF-1), $NF }')"
+;;
+4 )
 white " 当前socks5端口："
 mport=`warp-cli --accept-tos settings | grep 'Proxy listening on' | awk -F "127.0.0.1:" '{print $2}'`
 blue "$mport"
