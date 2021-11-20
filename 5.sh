@@ -268,10 +268,10 @@ yellow "继续使用原WARP账户请等待5秒或按回车跳过 \n启用WARP+PL
 readtp "按键许可证秘钥(26个字符):" ID
 if [[ -n $ID ]]; then
 sed -i "s/license_key.*/license_key = \"$ID\"/g" wgcf-account.toml
-wgcf update >/dev/null 2>&1
+wgcf update $SBID > /etc/wireguard/SBID.log 2>&1
 green "启用WARP+PLUS账户中，如上方显示：400 Bad Request，则使用原WARP账户,相关原因请看本项目Github说明" 
 fi
-wgcf generate >/dev/null 2>&1
+wgcf generate 
 
 yellow "开始自动设置WARP(+)的MTU最佳网络吞吐量值，以优化WARP网络！"
 v66=`curl -s6m3 https://ip.gs -k`
