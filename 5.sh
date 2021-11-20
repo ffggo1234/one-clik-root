@@ -646,7 +646,7 @@ readp "按键许可证秘钥(26个字符):" ID
 [[ -n $ID ]] && readp "设备名称重命名：" sbmc
 [[ -n $sbmc ]] && SBID="--name $(echo $sbmc | sed s/[[:space:]]/_/g)"
 sed -i "s/license_key.*/license_key = \"$ID\"/g" wgcf-account.toml
-wgcf update $SBID > /etc/wireguard/wgcf+p.log 2>&1
+wgcf update $SBID > /etc/wireguard/WGCF+.log 2>&1
 green "启用WARP+PLUS账户中，如上方显示：400 Bad Request，则使用原WARP账户,相关原因请看本项目Github说明" 
 wgcf generate
 sed -i "2s#.*#$(sed -ne 2p wgcf-profile.conf)#;3s#.*#$(sed -ne 3p wgcf-profile.conf)#;4s#.*#$(sed -ne 4p wgcf-profile.conf)#" wgcf.conf
@@ -665,7 +665,7 @@ done
 
 WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 WARPIPv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
-[[ $WARPIPv6 = plus || $WARPIPv4 = plus ]] && green "已升级为WGCF+账号\n WGCF+账号设备名称：$(grep -s 'Device name' /etc/wireguard/SBID.log | awk '{ print $NF }')\n WGCF+账号剩余流量：$(grep -s Quota /etc/wireguard/SBID.log | awk '{ print $(NF-1), $NF }')"
+[[ $WARPIPv6 = plus || $WARPIPv4 = plus ]] && green "已升级为WGCF+账号\n WGCF+账号设备名称：$(grep -s 'Device name' /etc/wireguard/WGCF+.log | awk '{ print $NF }')\n WGCF+账号剩余流量：$(grep -s Quota /etc/wireguard/WGCF+.log | awk '{ print $(NF-1), $NF }')"
 ;;
 4 )
 white " 当前socks5端口："
