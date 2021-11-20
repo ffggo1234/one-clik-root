@@ -650,8 +650,19 @@ wgcf update $SBID > /etc/wireguard/wgcf+p.log 2>&1
 green "启用WARP+PLUS账户中，如上方显示：400 Bad Request，则使用原WARP账户,相关原因请看本项目Github说明" 
 wgcf generate
 sed -i "2s#.*#$(sed -ne 2p wgcf-profile.conf)#;3s#.*#$(sed -ne 3p wgcf-profile.conf)#;4s#.*#$(sed -ne 4p wgcf-profile.conf)#" wgcf.conf
+
+yellow "请稍等3秒，获取WARP(+)IP中…………"
+wg-quick up wgcf >/dev/null 2>&1
+v4=$(curl -s4m3 https://ip.gs -k)
+v6=$(curl -s6m3 https://ip.gs -k)
+until [[ -n $v4 || -n $v6 ]]
+do
 wg-quick down wgcf >/dev/null 2>&1
-systemctl restart wg-quick@wgcf >/dev/null 2>&1
+wg-quick up wgcf >/dev/null 2>&1
+v4=$(curl -s4m3 https://ip.gs -k)
+v6=$(curl -s6m3 https://ip.gs -k)
+done
+
 WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 WARPIPv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 [[ $WARPIPv6 = plus || $WARPIPv4 = plus ]] && green "已升级为WGCF+账号\n WGCF+账号设备名称：$(grep -s 'Device name' /etc/wireguard/SBID.log | awk '{ print $NF }')\n WGCF+账号剩余流量：$(grep -s Quota /etc/wireguard/SBID.log | awk '{ print $(NF-1), $NF }')"
