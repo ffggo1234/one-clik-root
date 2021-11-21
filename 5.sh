@@ -317,14 +317,17 @@ yellow "请稍等3秒，获取WARP(+)IP中…………"
 wg-quick up wgcf >/dev/null 2>&1
 v4=$(curl -s4m3 https://ip.gs -k)
 v6=$(curl -s6m3 https://ip.gs -k)
-until [[ -n $v4 || -n $v6 ]]
+wv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+wv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+until [[ -n $v4 || -n $v6 ]] && [[ $wv6 = plus || $wv4 = plus || $wv6 = on || $wv4 = on ]]
 do
 wg-quick down wgcf >/dev/null 2>&1
 wg-quick up wgcf >/dev/null 2>&1
 v4=$(curl -s4m3 https://ip.gs -k)
 v6=$(curl -s6m3 https://ip.gs -k)
+wv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+wv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
 done
-
 systemctl enable wg-quick@wgcf >/dev/null 2>&1
 wg-quick down wgcf >/dev/null 2>&1
 systemctl start wg-quick@wgcf
@@ -655,12 +658,16 @@ yellow "请稍等3秒，获取WARP(+)IP中…………"
 wg-quick up wgcf >/dev/null 2>&1
 v4=$(curl -s4m3 https://ip.gs -k)
 v6=$(curl -s6m3 https://ip.gs -k)
-until [[ -n $v4 || -n $v6 ]]
+wv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+wv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+until [[ -n $v4 || -n $v6 ]] && [[ $wv4 = plus || $wv6 = plus ]]
 do
 wg-quick down wgcf >/dev/null 2>&1
 wg-quick up wgcf >/dev/null 2>&1
 v4=$(curl -s4m3 https://ip.gs -k)
 v6=$(curl -s6m3 https://ip.gs -k)
+wv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+wv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
 done
 
 WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
