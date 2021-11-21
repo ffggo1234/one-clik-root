@@ -138,7 +138,7 @@ S5gj=`curl -s https://api.ip.sb/geoip/$S5ip -k | awk -F "country_code" '{print $
 S5zgj=$(eval echo \$$S5gj)
 case ${S5Status} in 
 plus) 
-S5Status1=$(white " socks5+状态：\c" ; rred "socks5+warp+运行中" ; white "socks5端口：\c" ; rred "$mport" ; white "WARP+的IP地址：\c" ; rred "$S5ip" ; white "IP所在区域：\c" ; rred "$S5zgj" ; white "WGCF+账号剩余流量：\c" ; rred "$((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000))GB") 
+S5Status1=$(white " socks5+状态：\c" ; rred "socks5+warp+运行中" ; white "socks5端口：\c" ; rred "$mport" ; white "WARP+的IP地址：\c" ; rred "$S5ip" ; white "IP所在区域：\c" ; rred "$S5zgj" ; white "WGCF+账号剩余流量：\c" ; rred "$((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GiB") 
 ;;  
 on) 
 S5Status1=$(white " socks5状态：\c" ; green "socks5-warp运行中" ; white "socks5端口：\c" ; green "$mport" ; white "WARP的IP地址：\c" ; green "$S5ip" ; white "IP所在区域：\c" ; green "$S5zgj") 
@@ -640,7 +640,7 @@ warp-cli --accept-tos connect
 warp-cli --accept-tos enable-always-on
 mport=`warp-cli --accept-tos settings | grep 'Proxy listening on' | awk -F "127.0.0.1:" '{print $2}'`
 S5Status=$(curl -sx socks5h://localhost:$mport https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
-[[ $S5Status = plus ]] && green "已升级为SOCKS5+账号\n WGCF+账号剩余流量：$((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000))GB"
+[[ $S5Status = plus ]] && green "已升级为SOCKS5+账号\n WGCF+账号剩余流量：$((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GiB"
 ;;
 3 )
 cd /etc/wireguard
