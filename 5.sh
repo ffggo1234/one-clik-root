@@ -314,19 +314,21 @@ cp -f wgcf-profile.conf /etc/wireguard/wgcf.conf >/dev/null 2>&1
 mv -f wgcf-profile.conf /etc/wireguard >/dev/null 2>&1
 mv -f wgcf-account.toml /etc/wireguard >/dev/null 2>&1
 yellow "请稍等3秒，获取WARP(+)IP中…………"
+i=1;j=5
 wg-quick up wgcf >/dev/null 2>&1
 v4=$(curl -s4m3 https://ip.gs -k)
 v6=$(curl -s6m3 https://ip.gs -k)
 wv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
 wv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
 until [[ -n $v4 || -n $v6 ]] && [[ $wv6 = plus || $wv4 = plus || $wv6 = on || $wv4 = on ]]
-do
+do let i++
 wg-quick down wgcf >/dev/null 2>&1
 wg-quick up wgcf >/dev/null 2>&1
 v4=$(curl -s4m3 https://ip.gs -k)
 v6=$(curl -s6m3 https://ip.gs -k)
 wv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
 wv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+[[ $i = $j ]] && red "获取WARP(+)IP失败"
 done
 systemctl enable wg-quick@wgcf >/dev/null 2>&1
 wg-quick down wgcf >/dev/null 2>&1
@@ -370,7 +372,7 @@ esac
 else
 WARPIPv6Status=$(red "不存在IPV6地址 ")
 fi 
-[[ $WARPIPv6 = plus || $WARPIPv4 = plus || $WARPIPv6 = on || $WARPIPv4 = on ]] && green "WARP(+)IP获取成功！" || red "WARP(+)IP获取失败！"
+[[ $WARPIPv6 = plus || $WARPIPv4 = plus || $WARPIPv6 = on || $WARPIPv4 = on ]] && green "WARP(+)IP获取成功！"
 
 green " WARP(+)安装结束！ "
 white "=========================================="
@@ -655,19 +657,21 @@ wgcf generate
 sed -i "2s#.*#$(sed -ne 2p wgcf-profile.conf)#;3s#.*#$(sed -ne 3p wgcf-profile.conf)#;4s#.*#$(sed -ne 4p wgcf-profile.conf)#" wgcf.conf
 
 yellow "请稍等3秒，获取WARP(+)IP中…………"
+i=1;j=5
 wg-quick up wgcf >/dev/null 2>&1
 v4=$(curl -s4m3 https://ip.gs -k)
 v6=$(curl -s6m3 https://ip.gs -k)
 wv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
 wv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
 until [[ -n $v4 || -n $v6 ]] && [[ $wv4 = plus || $wv6 = plus ]]
-do
-wg-quick down wgcf >/dev/null 2>&1
+do  let i++
+wg-quicklet down wgcf >/dev/null 2>&1
 wg-quick up wgcf >/dev/null 2>&1
 v4=$(curl -s4m3 https://ip.gs -k)
 v6=$(curl -s6m3 https://ip.gs -k)
 wv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
 wv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+[[ $i = $j ]] && red "获取WGCF+IP失败"
 done
 
 WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
