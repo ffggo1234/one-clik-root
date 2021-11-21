@@ -101,7 +101,7 @@ g4=$(eval echo \$$gj4)
 WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 case ${WARPIPv4} in 
 plus) 
-WARPIPv4Status=$(white "IPV4 WARP(+)状态：\c" ; rred "WARP+PLUS运行中" ; white " IPV4 当前地址：\c" ; rred "$v44" ; white " IPV4 所在区域：\c" ; rred "$g4" ; white " IPV4 IP服务商：\c" ; rred "$isp4") 
+WARPIPv4Status=$(white "IPV4 WARP(+)状态：\c" ; rred "WARP+PLUS运行中" ; white " IPV4 当前地址：\c" ; rred "$v44" ; white " IPV4 所在区域：\c" ; rred "$g4" ; white " IPV4 IP服务商：\c" ; rred "$isp4" ; white " WGCF+账号设备名称：\c" ; rred "$(grep -s 'Device name' /etc/wireguard/WGCF+.log | awk '{ print $NF }')" ; white "WGCF+账号剩余流量：\c" ; rred "$(grep -s Quota /etc/wireguard/WGCF+.log | awk '{ print $(NF-1), $NF }')") 
 ;;  
 on) 
 WARPIPv4Status=$(white "IPV4 WARP状态：\c" ; green "WARP运行中" ; white " IPV4 当前地址：\c" ; green "$v44" ; white " IPV4 所在区域：\c" ; green "$g4" ; white " IPV4 IP服务商：\c" ; green "$isp4")
@@ -118,7 +118,7 @@ g6=$(eval echo \$$gj6)
 WARPIPv6Status=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 case ${WARPIPv6Status} in 
 plus) 
-WARPIPv6Status=$(white "IPV6 WARP(+)状态：\c" ; rred "WARP+PLUS运行中" ; white " IPV6 当前地址：\c" ; rred "$v66" ; white " IPV6 所在区域：\c" ; rred "$g6" ; white " IPV6 IP服务商：\c" ; rred "$isp6") 
+WARPIPv6Status=$(white "IPV6 WARP(+)状态：\c" ; rred "WARP+PLUS运行中" ; white " IPV6 当前地址：\c" ; rred "$v66" ; white " IPV6 所在区域：\c" ; rred "$g6" ; white " IPV6 IP服务商：\c" ; rred "$isp6" ; white " WGCF+账号设备名称：\c" ; rred "$(grep -s 'Device name' /etc/wireguard/WGCF+.log | awk '{ print $NF }')" ; white "WGCF+账号剩余流量：\c" ; rred "$(grep -s Quota /etc/wireguard/WGCF+.log | awk '{ print $(NF-1), $NF }')") 
 ;;  
 on) 
 WARPIPv6Status=$(white "IPV6 WARP状态：\c" ; green "WARP运行中" ; white " IPV6 当前地址：\c" ; green "$v66" ; white " IPV6 所在区域：\c" ; green "$g6" ; white " IPV6 IP服务商：\c" ; green "$isp6")
@@ -138,10 +138,10 @@ S5gj=`curl -s https://api.ip.sb/geoip/$S5ip -k | awk -F "country_code" '{print $
 S5zgj=$(eval echo \$$S5gj)
 case ${S5Status} in 
 plus) 
-S5Status1=$(white " socks5+状态：\c" ; rred "socks5+warp+运行中" ; white "socks5端口：\c" ; rred "$mport" ; white "WARP+的IP地址：\c" ; rred "$S5ip" ; white "IP所在区域：\c" ; rred "$S5zgj") 
+S5Status1=$(white " socks5+状态：\c" ; rred "socks5+warp+运行中" ; white "socks5端口：\c" ; rred "$mport" ; white "WARP+的IP地址：\c" ; rred "$S5ip" ; white "IP所在区域：\c" ; rred "$S5zgj" ; white "WGCF+账号剩余流量：\c" ; rred "$((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000))GB") 
 ;;  
 on) 
-S5Status1=$(white " socks5状态：\c" ; green "socks5-warp运行中" ; white "socks5端口：\c" ; green "$mport" ; white "WARP+的IP地址：\c" ; green "$S5ip" ; white "IP所在区域：\c" ; green "$S5zgj") 
+S5Status1=$(white " socks5状态：\c" ; green "socks5-warp运行中" ; white "socks5端口：\c" ; green "$mport" ; white "WARP的IP地址：\c" ; green "$S5ip" ; white "IP所在区域：\c" ; green "$S5zgj") 
 ;;  
 *) 
 S5Status1=$(white " socks5状态：没开启")
