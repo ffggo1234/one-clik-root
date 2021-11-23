@@ -55,7 +55,7 @@ rm -f CFwarp.sh
 exit 1
 fi
 
-bit=`uname -m`
+uname -m | grep -q -E -i "aarch" && cpu=ARM || cpu=AMD
 version=`uname -r | awk -F "-" '{print $1}'`
 main=`uname  -r | awk -F . '{print $1 }'`
 minor=`uname -r | awk -F . '{print $2}'`
@@ -164,7 +164,7 @@ c6="sed -i 's/1.1.1.1/2001:4860:4860::8888,8.8.8.8/g' wgcf-profile.conf"
 Print_ALL_Status_menu() {
 white " 操作系统名称: $(blue "$op")"
 white " 系统内核版本: $(blue "$version")" 
-white " CPU架构名称 : $(blue "$bit")"
+white " CPU架构名称 : $(blue "$cpu")"
 white " 虚拟架构类型: $(blue "$vi")"
 white "=========================================="
 if [[ $WARPIPv4 = off ]]; then
@@ -541,7 +541,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/kkkyg/CFwarp/ma
 
 socks5(){
 WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
-[[ ! ${bit} = "x86_64" ]] && red "目前不支持arm架构的CPU" && bash CFwarp.sh
+[[ cpu=AMD ]] && red "目前不支持arm架构的CPU" && bash CFwarp.sh
 [[ $WARPIPv4 = plus || $WARPIPv4 = on ]] && red "目前不支持已开启wgcf的ipv4" && bash CFwarp.sh 
 [[ $(type -P warp-cli) ]] && red "当前SOCKS5 WARP已经在运行中" && bash CFwarp.sh
 systemctl stop wg-quick@wgcf >/dev/null 2>&1
