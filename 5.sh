@@ -52,9 +52,9 @@ rm -f CFwarp.sh
 exit 1
 fi
 vsid=`grep -i version_id /etc/os-release | cut -d \" -f2 | cut -d . -f1`
-[[ $release = "Centos" && ${vsid} -lt 7 ]] && red "不支持 Centos 7 以下系统 " && exit 1
-[[ $release = "Ubuntu" && ${vsid} -lt 18 ]] && red "不支持 Ubuntu 18 以下系统 " && exit 1
-[[ $release = "Debian" && ${vsid} -lt 10 ]] && red "不支持 Debian 10 以下系统 " && exit 1
+[[ $release = Centos && ${vsid} -lt 7 ]] && red "不支持 Centos 7 以下系统 " && exit 1
+[[ $release = Ubuntu && ${vsid} -lt 18 ]] && red "不支持 Ubuntu 18 以下系统 " && exit 1
+[[ $release = Debian && ${vsid} -lt 10 ]] && red "不支持 Debian 10 以下系统 " && exit 1
 
 sys(){
 [ -f /etc/redhat-release ] && awk '{print $0}' /etc/redhat-release && return
@@ -70,7 +70,7 @@ vi=`systemd-detect-virt`
 
 if ! type curl >/dev/null 2>&1; then 
 yellow "检测到curl未安装，安装中 "
-if [ $release = "Centos" ]; then
+if [[ $release = Centos ]]; then
 yum update -y && yum install curl -y
 else
 apt update -y && apt install curl -y
@@ -184,11 +184,11 @@ ins(){
 systemctl stop wg-quick@wgcf >/dev/null 2>&1
 rm -rf /usr/local/bin/wgcf /etc/wireguard/wgcf.conf /etc/wireguard/wgcf-profile.conf /etc/wireguard/wgcf-account.toml /usr/bin/wireguard-go wgcf-account.toml wgcf-profile.conf 
 
-if [[ ${vi} == "lxc" || ${vi} == "openvz" ]]; then
+if [[ $vi = lxc|openvz ]]; then
 yellow "正在检测lxc/openvz架构的vps是否开启TUN………！"
 sleep 2s
 TUN=$(cat /dev/net/tun 2>&1)
-if [[ ${TUN} == "cat: /dev/net/tun: File descriptor in bad state" ]]; then
+if [[ ${TUN} = "cat: /dev/net/tun: File descriptor in bad state" ]]; then
 green "检测完毕：已开启TUN，支持安装wireguard-go模式的WARP(+)，继续……"
 else
 red "检测完毕：未开启TUN，不支持安装WARP(+)，请与VPS厂商沟通或后台设置以开启TUN，反馈地址 https://github.com/kkkyg/CFwarp/issues"
@@ -196,15 +196,15 @@ exit 1
 fi
 fi
 
-if [[ ${vi} == "lxc" ]] && [ $release = "Centos" ]; then
+if [[ $vi = lxc && $release = Centos ]]; then
 echo -e nameserver 2a01:4f8:c2c:123f::1 > /etc/resolv.conf
 fi
 
-if [ $release = "Centos" ]; then  
+if [[ $release = Centos ]]; then  
 yum -y install epel-release
 yum -y install wireguard-tools	
-if [ "$main" -lt 5 ]|| [ "$minor" -lt 6 ]; then 
-if [[ ${vi} == "kvm" || ${vi} == "xen" || ${vi} == "microsoft" ]]; then
+if [[ $main -lt 5 || $minor -lt 6 ]]; then 
+if [[ $vi != lxc|openvz ]]; then
 green "经检测，内核小于5.6版本，安装WARP内核模块模式"
 yellow "内核升级到5.6版本以上，即可安装最高效的WARP内核集成模式"
 sleep 2s
@@ -215,14 +215,14 @@ fi
 fi	
 yum -y update
 
-elif [ $release = "Debian" ]; then
+elif [[ $release = Debian ]]; then
 apt update -y 
 apt -y install lsb-release
 echo "deb http://deb.debian.org/debian $(lsb_release -sc)-backports main" | tee /etc/apt/sources.list.d/backports.list
 apt update -y
 apt -y --no-install-recommends install iproute2 openresolv dnsutils wireguard-tools               		
-if [ "$main" -lt 5 ]|| [ "$minor" -lt 6 ]; then
-if [[ ${vi} == "kvm" || ${vi} == "xen" || ${vi} == "microsoft" ]]; then
+if [[ $main -lt 5 || $minor -lt 6 ]]; then 
+if [[ $vi != lxc|openvz ]]; then
 green "经检测，内核小于5.6版本，安装WARP内核模块模式"
 yellow "内核升级到5.6版本以上，即可安装最高效的WARP内核集成模式"
 sleep 2s
@@ -231,19 +231,14 @@ fi
 fi		
 apt update -y
 	
-elif [ $release = "Ubuntu" ]; then
+elif [[ $release = Ubuntu ]]; then
 apt update -y  
 apt -y --no-install-recommends install iproute2 openresolv dnsutils wireguard-tools			
 fi
-	
-if [[ ${bit} == "x86_64" ]]; then
-wget -N https://cdn.jsdelivr.net/gh/kkkyg/CFwarp/wgcf_2.2.9_amd64 -O /usr/local/bin/wgcf && chmod +x /usr/local/bin/wgcf         
-elif [[ ${bit} == "aarch64" ]]; then
-wget -N https://cdn.jsdelivr.net/gh/kkkyg/CFwarp/wgcf_2.2.9_arm64 -O /usr/local/bin/wgcf && chmod +x /usr/local/bin/wgcf
-fi
-if [[ ${vi} == "lxc" || ${vi} == "openvz" ]]; then
-wget -N https://cdn.jsdelivr.net/gh/kkkyg/CFwarp/wireguard-go -O /usr/bin/wireguard-go && chmod +x /usr/bin/wireguard-go
-fi
+
+[[ $cpu = AMD ]] && wget -N https://cdn.jsdelivr.net/gh/kkkyg/CFwarp/wgcf_2.2.9_amd64 -O /usr/local/bin/wgcf && chmod +x /usr/local/bin/wgcf         
+[[ $cpu = ARM ]] && wget -N https://cdn.jsdelivr.net/gh/kkkyg/CFwarp/wgcf_2.2.9_arm64 -O /usr/local/bin/wgcf && chmod +x /usr/local/bin/wgcf
+[[ $vi = lxc|openvz ]] && wget -N https://cdn.jsdelivr.net/gh/kkkyg/CFwarp/wireguard-go -O /usr/bin/wireguard-go && chmod +x /usr/bin/wireguard-go
 
 mkdir -p /etc/wireguard/ >/dev/null 2>&1
 yellow "执行申请WARP账户过程中可能会多次提示：429 Too Many Requests，请耐心等待。"
@@ -394,7 +389,7 @@ get_char && bash CFwarp.sh
 warpplus(){
 if ! type python3 >/dev/null 2>&1; then 
 yellow "检测到python3未安装，安装中 "
-if [ $release = "Centos" ]; then
+if [ $release = Centos ]; then
 yum -y install python3
 else 
 apt -y install python3
@@ -416,15 +411,15 @@ green "甲骨文VPS的系统所有端口规则已打开"
 }
 
 BBR(){
-if [[ ${vi} == "lxc" ]]; then
+if [[ $vi = lxc ]]; then
 red "你的VPS为lxc，目前不支持当前VPS的架构安装各类加速 "
 fi
-if [[ ${vi} == "openvz" ]]; then
+if [[ $vi = openvz ]]; then
 yellow "你的VPS为openvz，支持lkl-haproxy版的BBR-PLUS加速"
 wget --no-cache -O lkl-haproxy.sh https://github.com/mzz2017/lkl-haproxy/raw/master/lkl-haproxy.sh && bash lkl-haproxy.sh
 fi
 bbr=$(lsmod | grep bbr)
-if [[ ${vi} == "kvm" || ${vi} == "xen" || ${vi} == "microsoft" ]]; then
+if [[ $vi != lxc|openvz ]]; then
 if [[ -z ${bbr} ]]; then
 yellow "检测完毕：未开启BBR加速，安装BBR加速中……" 
 sleep 2s
@@ -447,13 +442,13 @@ cwarp(){
 cwg(){
 wg-quick down wgcf >/dev/null 2>&1
 systemctl disable wg-quick@wgcf --now >/dev/null 2>&1
-[[ $release = "Centos" ]] && (yum -y autoremove wireguard-tools wireguard-dkms) || (apt -y autoremove wireguard-tools wireguard-dkms)
+[[ $release = Centos ]] && (yum -y autoremove wireguard-tools wireguard-dkms) || (apt -y autoremove wireguard-tools wireguard-dkms)
 }
 cso(){
 warp-cli --accept-tos disconnect >/dev/null 2>&1
 warp-cli --accept-tos delete >/dev/null 2>&1
 systemctl disable warp-svc >/dev/null 2>&1
-[[ $release = "Centos" ]] && (yum remove cloudflare-warp -y) || (apt purge cloudflare-warp -y && rm -f /etc/apt/sources.list.d/cloudflare-client.list)
+[[ $release = Centos ]] && (yum remove cloudflare-warp -y) || (apt purge cloudflare-warp -y && rm -f /etc/apt/sources.list.d/cloudflare-client.list)
 }
 wgso2="rm -rf /usr/local/bin/wgcf /etc/wireguard/wgcf.conf /etc/wireguard/wgcf-profile.conf /etc/wireguard/wgcf-account.toml /usr/bin/wireguard-go wgcf-account.toml wgcf-profile.conf ucore.sh nf.sh CFwarp.sh"
 un="1.仅卸载WGCF WARP代理\n 2.仅卸载SOCKS5 WARP代理\n 3.彻底卸载并清除所有WARP及脚本文件\n 请选择："
@@ -531,7 +526,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/kkkyg/CFwarp/ma
 
 socks5(){
 WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
-[[ cpu=AMD ]] && red "目前不支持arm架构的CPU" && bash CFwarp.sh
+[[ $cpu = AMD ]] && red "目前不支持arm架构的CPU" && bash CFwarp.sh
 [[ $WARPIPv4 = plus || $WARPIPv4 = on ]] && red "目前不支持已开启wgcf的ipv4" && bash CFwarp.sh 
 [[ $(type -P warp-cli) ]] && red "当前SOCKS5 WARP已经在运行中" && bash CFwarp.sh
 systemctl stop wg-quick@wgcf >/dev/null 2>&1
@@ -541,12 +536,12 @@ systemctl start wg-quick@wgcf >/dev/null 2>&1
 if [[ -n ${v44} && -n ${v66} ]]; then 
 grep -qE '^[ ]*precedence[ ]*::ffff:0:0/96[ ]*100' /etc/gai.conf || echo 'precedence ::ffff:0:0/96  100' | sudo tee -a /etc/gai.conf
 fi
-if [ $release = "Centos" ]; then 
+if [[ $release = Centos ]]; then 
 yum -y install epel-release && yum -y install net-tools
 rpm -ivh http://pkg.cloudflareclient.com/cloudflare-release-el$vsid.rpm
 yum -y install cloudflare-warp && yum -y update
 fi
-if [ $release = "Debian" ]; then
+if [[ $release = Debian ]]; then
 if ! type gpg >/dev/null 2>&1; then 
 apt update
 apt install gnupg -y
@@ -556,7 +551,7 @@ apt update
 apt install apt-transport-https -y
 fi
 fi
-if [ ! $release = "Centos" ]; then 
+if [[ $release != Centos ]]; then 
 apt -y update && apt -y install lsb-release && apt -y install net-tools
 curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo apt-key add -
 echo "deb http://pkg.cloudflareclient.com/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/cloudflare-client.list
