@@ -67,16 +67,9 @@ sys(){
 op=`sys`
 vi=`systemd-detect-virt`
 vsid=`grep -i version_id /etc/os-release | cut -d \" -f2 | cut -d . -f1`
-if [ $release = "Centos" ] && [[ ${vsid} -lt 7 ]]; then
-red "不支持 Centos 7 以下系统 "
-exit 1
-elif [ $release = "Ubuntu" ] && [[ ${vsid} -lt 18 ]]; then
-red "不支持 Ubuntu 18 以下系统 "
-exit 1
-elif [ $release = "Debian" ] && [[ ${vsid} -lt 10 ]]; then
-red "不支持 Debian 10 以下系统 "
-exit 1
-fi
+[[ $release = "Centos" && ${vsid} -lt 7 ]] && red "不支持 Centos 7 以下系统 " && exit 1
+[[ $release = "Ubuntu" && ${vsid} -lt 18 ]] && red "不支持 Ubuntu 18 以下系统 " && exit 1
+[[ $release = "Debian" && ${vsid} -lt 10 ]] && red "不支持 Debian 10 以下系统 " && exit 1
 
 if ! type curl >/dev/null 2>&1; then 
 yellow "检测到curl未安装，安装中 "
