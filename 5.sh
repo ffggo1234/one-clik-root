@@ -204,7 +204,7 @@ if [[ $release = Centos ]]; then
 yum -y install epel-release
 yum -y install wireguard-tools	
 if [[ $main -lt 5 || $minor -lt 6 ]]; then 
-if [[ $vi != lxc|openvz ]]; then
+if [[ $vi != "lxc|openvz" ]]; then
 green "经检测，内核小于5.6版本，安装WARP内核模块模式"
 yellow "内核升级到5.6版本以上，即可安装最高效的WARP内核集成模式"
 sleep 2s
@@ -222,7 +222,7 @@ echo "deb http://deb.debian.org/debian $(lsb_release -sc)-backports main" | tee 
 apt update -y
 apt -y --no-install-recommends install iproute2 openresolv dnsutils wireguard-tools               		
 if [[ $main -lt 5 || $minor -lt 6 ]]; then 
-if [[ $vi != lxc|openvz ]]; then
+if [[ $vi != "lxc|openvz" ]]; then
 green "经检测，内核小于5.6版本，安装WARP内核模块模式"
 yellow "内核升级到5.6版本以上，即可安装最高效的WARP内核集成模式"
 sleep 2s
@@ -238,7 +238,7 @@ fi
 
 [[ $cpu = AMD ]] && wget -N https://cdn.jsdelivr.net/gh/kkkyg/CFwarp/wgcf_2.2.9_amd64 -O /usr/local/bin/wgcf && chmod +x /usr/local/bin/wgcf         
 [[ $cpu = ARM ]] && wget -N https://cdn.jsdelivr.net/gh/kkkyg/CFwarp/wgcf_2.2.9_arm64 -O /usr/local/bin/wgcf && chmod +x /usr/local/bin/wgcf
-[[ $vi = lxc|openvz ]] && wget -N https://cdn.jsdelivr.net/gh/kkkyg/CFwarp/wireguard-go -O /usr/bin/wireguard-go && chmod +x /usr/bin/wireguard-go
+[[ $vi = "lxc|openvz" ]] && wget -N https://cdn.jsdelivr.net/gh/kkkyg/CFwarp/wireguard-go -O /usr/bin/wireguard-go && chmod +x /usr/bin/wireguard-go
 
 mkdir -p /etc/wireguard/ >/dev/null 2>&1
 yellow "执行申请WARP账户过程中可能会多次提示：429 Too Many Requests，请耐心等待。"
@@ -419,7 +419,7 @@ yellow "你的VPS为openvz，支持lkl-haproxy版的BBR-PLUS加速"
 wget --no-cache -O lkl-haproxy.sh https://github.com/mzz2017/lkl-haproxy/raw/master/lkl-haproxy.sh && bash lkl-haproxy.sh
 fi
 bbr=$(lsmod | grep bbr)
-if [[ $vi != lxc|openvz ]]; then
+if [[ $vi != "lxc|openvz" ]]; then
 if [[ -z ${bbr} ]]; then
 yellow "检测完毕：未开启BBR加速，安装BBR加速中……" 
 sleep 2s
