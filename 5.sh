@@ -184,7 +184,7 @@ ins(){
 systemctl stop wg-quick@wgcf >/dev/null 2>&1
 rm -rf /usr/local/bin/wgcf /etc/wireguard/wgcf.conf /etc/wireguard/wgcf-profile.conf /etc/wireguard/wgcf-account.toml /usr/bin/wireguard-go wgcf-account.toml wgcf-profile.conf 
 
-if [[ $vi = lxc | openvz ]]; then
+if [[ $vi = "lxc|openvz" ]]; then
 yellow "正在检测lxc/openvz架构的vps是否开启TUN………！"
 sleep 2s
 TUN=$(cat /dev/net/tun 2>&1)
