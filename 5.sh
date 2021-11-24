@@ -30,10 +30,7 @@ readp(){
 	read -p "$(green "$1")" $2
 }
 
-if [[ $EUID -ne 0 ]]; then
-yellow "请以root模式运行脚本。"
-exit 1
-fi
+[[ $EUID -ne 0 ]] && yellow "请以root模式运行脚本" && exit 1
 
 if [[ -f /etc/redhat-release ]]; then
 release="Centos"
