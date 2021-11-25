@@ -184,7 +184,7 @@ ins(){
 systemctl stop wg-quick@wgcf >/dev/null 2>&1
 rm -rf /usr/local/bin/wgcf /etc/wireguard/wgcf.conf /etc/wireguard/wgcf-profile.conf /etc/wireguard/wgcf-account.toml /usr/bin/wireguard-go wgcf-account.toml wgcf-profile.conf 
 
-if [[ $vi = 'lxc|openvz' ]]; then
+if [[ $vi =~ lxc|openvz ]]; then
 yellow "正在检测lxc/openvz架构的vps是否开启TUN………！"
 sleep 2s
 TUN=$(cat /dev/net/tun 2>&1)
@@ -204,7 +204,7 @@ if [[ $release = Centos ]]; then
 yum -y install epel-release
 yum -y install wireguard-tools	
 if [[ $main -lt 5 || $minor -lt 6 ]]; then 
-if [[ $vi != 'lxc|openvz' ]]; then
+if [[ $vi !=~ lxc|openvz ]]; then
 green "经检测，内核小于5.6版本，安装WARP内核模块模式"
 yellow "内核升级到5.6版本以上，即可安装最高效的WARP内核集成模式"
 sleep 2s
