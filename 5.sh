@@ -15,15 +15,16 @@ readp(){ read -p "$(green "$1")" $2;}
 
 [[ $EUID -ne 0 ]] && yellow "请以root模式运行脚本,先输入sudo -i 回车，再执行本脚本" && exit 1
 
-sys1(){
-[ -f /etc/redhat-release ] && release=Centos
-cat /etc/issue | grep -q -E -i "debian" && release=Debian
-cat /etc/issue | grep -q -E -i "ubuntu" && release=Ubuntu
-cat /etc/issue | grep -q -E -i "centos|red hat|redhat" && release=Centos
-cat /proc/version | grep -q -E -i "debian" && release=Debian
-cat /proc/version | grep -q -E -i "ubuntu" && release=Ubuntu
-cat /proc/version | grep -q -E -i "centos|red hat|redhat" && release=Centos;}
-[[ -z $sys1 ]] && red "不支持你当前系统，请选择使用Ubuntu,Debian,Centos系统。请向作者反馈 https://github.com/kkkyg/CFwarp/issues" && rm -f CFwarp.sh && exit 1
+if [[ -f /etc/redhat-release ]] || cat /etc/issue | grep -q -E -i "centos|red hat|redhat" || cat /proc/version | grep -q -E -i "centos|red hat|redhat"; then
+release="Centos"
+elif cat /etc/issue | grep -q -E -i "debian" || cat /proc/version | grep -q -E -i "debian"; then
+release="Debian"
+elif cat /etc/issue | grep -q -E -i "ubuntu" || cat /proc/version | grep -q -E -i "ubuntu"; then
+release="Ubuntu"
+else 
+red "不支持你当前系统，请选择使用Ubuntu,Debian,Centos系统。请向作者反馈 https://github.com/kkkyg/CFwarp/issues"
+rm -f CFwarp.sh && exit 1
+fi
 
 vsid=`grep -i version_id /etc/os-release | cut -d \" -f2 | cut -d . -f1`
 [[ $release = Centos && ${vsid} -lt 7 ]] && red "不支持 Centos 7 以下系统 " && exit 1
