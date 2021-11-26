@@ -43,8 +43,7 @@ vsid=`grep -i version_id /etc/os-release | cut -d \" -f2 | cut -d . -f1`
 sys(){
 [ -f /etc/os-release ] && grep -i pretty_name /etc/os-release | cut -d \" -f2 && return
 [ -f /etc/lsb-release ] && grep -i description /etc/lsb-release | cut -d \" -f2 && return
-[ -f /etc/redhat-release ] && awk '{print $0}' /etc/redhat-release && return
-}
+[ -f /etc/redhat-release ] && awk '{print $0}' /etc/redhat-release && return;}
 op=`sys`
 version=`uname -r | awk -F "-" '{print $1}'`
 main=`uname  -r | awk -F . '{print $1 }'`
