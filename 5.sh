@@ -530,10 +530,55 @@ blue " ${S5Status1}"
 }
 
 changportip(){
+
+wgcf(){
+readp "$un" uninstall
+case "$uninstall" in 
+
+
+esac
+}
+
+socks5(){
+readp "$un" uninstall
+case "$uninstall" in 
+
+
+esac
+}
+
+readp "$un" uninstall
+case "$uninstall" in 
+
+1 wgcf
+
+2 socks5
+esac
+}
+
+
+
 [[ ! $(type -P warp-cli) ]] && red "SOCKS5的WARP未安装，建议重新安装WARP(+)" && bash CFwarp.sh
 un="1.换SOCKS5的IP\n 2.升级SOCKS5+账户\n 3.升级WGCF+账户\n 4.更改SOCKS5端口\n 请选择："
 readp "$un" STP
 case "$STP" in 
+
+1 )
+wg=$(systemctl is-enabled wg-quick@wgcf 2>/dev/null)
+if [[ ! $wg = enabled ]]; then
+red "WARP(+)未安装，无法启动或关闭，建议重新安装WARP(+)"
+else
+systemctl restart wg-quick@wgcf >/dev/null 2>&1
+green "已刷新并修复WARP(+)的IP！请回主菜单查看更新后IP情况"
+fi
+white "============================================================================================="
+white "回主菜单，请按任意键"
+white "退出脚本，请按Ctrl+C"
+get_char && bash CFwarp.sh
+}
+
+
+
 1 )
 white " 当前socks5的warp ip"
 mport=`warp-cli --accept-tos settings | grep 'Proxy listening on' | awk -F "127.0.0.1:" '{print $2}'`
