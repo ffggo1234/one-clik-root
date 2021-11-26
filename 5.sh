@@ -2,17 +2,17 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
-red(){ echo -e "\033[31m\033[01m$1\033[0m"}
-green(){ echo -e "\033[32m\033[01m$1\033[0m"}
-yellow(){ echo -e "\033[33m\033[01m$1\033[0m"}
-blue(){ echo -e "\033[36m\033[01m$1\033[0m"}
-white(){ echo -e "\033[37m\033[01m$1\033[0m"}
-bblue(){ echo -e "\033[34m\033[01m$1\033[0m"}
-rred(){ echo -e "\033[35m\033[01m$1\033[0m"}
-readtp(){ read -t5 -p "$(yellow "$1")" $2}
-readp(){ read -p "$(green "$1")" $2}
-
 [[ $EUID -ne 0 ]] && yellow "请以root模式运行脚本" && exit 1
+
+red(){ echo -e "\033[31m\033[01m$1\033[0m";}
+green(){ echo -e "\033[32m\033[01m$1\033[0m";}
+yellow(){ echo -e "\033[33m\033[01m$1\033[0m";}
+blue(){ echo -e "\033[36m\033[01m$1\033[0m";}
+white(){ echo -e "\033[37m\033[01m$1\033[0m";}
+bblue(){ echo -e "\033[34m\033[01m$1\033[0m";}
+rred(){ echo -e "\033[35m\033[01m$1\033[0m";}
+readtp(){ read -t5 -p "$(yellow "$1")" $2;}
+readp(){ read -p "$(green "$1")" $2;}
 
 if [[ -f /etc/redhat-release ]]; then
 release="Centos"
