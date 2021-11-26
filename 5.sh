@@ -13,7 +13,7 @@ rred(){ echo -e "\033[35m\033[01m$1\033[0m";}
 readtp(){ read -t5 -p "$(yellow "$1")" $2;}
 readp(){ read -p "$(green "$1")" $2;}
 
-[[ $EUID -ne 0 ]] && yellow "请以root模式运行脚本,先输入sudo -i 回车，再执行本脚本" && exit 1
+[[ $EUID -ne 0 ]] && yellow "请以root模式运行脚本" && exit 1
 
 if [[ -f /etc/redhat-release ]] || cat /etc/issue | grep -q -E -i "centos|red hat|redhat" || cat /proc/version | grep -q -E -i "centos|red hat|redhat"; then
 release="Centos"
