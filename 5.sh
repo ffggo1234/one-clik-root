@@ -43,15 +43,9 @@ uname -m | grep -q -E -i "aarch" && cpu=ARM64 || cpu=AMD64
 vi=`systemd-detect-virt`
 
 if ! type curl >/dev/null 2>&1; then 
-yellow "检测到curl未安装，安装中 "
-if [[ $release = Centos ]]; then
-yum update -y && yum install curl -y
-else
-apt update -y && apt install curl -y
+yellow "检测到curl未安装，升级安装中"
+[[ $release = Centos ]] && (yum update -y && yum install curl -y) || (apt update -y && apt install curl -y)
 fi	   
-else
-green " curl已安装，继续 "
-fi
 
 yellow " 请稍等3秒……正在扫描vps类型及参数中……"
 AE="阿联酋";AU="澳大利亚";BR="巴西";CA="加拿大";CH="瑞士";CL="智利";CN="中国";CO="哥伦比亚";DE="德国";ES="西班牙";FI="芬兰";FR="法国";HK="香港";ID="印度尼西亚";IE="爱尔兰";IL="以色列";IN="印度";IT="意大利";JP="日本";KR="韩国";LU="卢森堡";MX="墨西哥";MY="马来西亚";NL="荷兰";NZ="新西兰";PH="菲律宾";RU="俄罗斯";SA="沙特";SE="瑞典";SG="新加坡";TW="台湾";UK="英国";US="美国";VN="越南";ZA="南非"
@@ -158,62 +152,30 @@ ins(){
 systemctl stop wg-quick@wgcf >/dev/null 2>&1
 rm -rf /usr/local/bin/wgcf /etc/wireguard/wgcf.conf /etc/wireguard/wgcf-profile.conf /etc/wireguard/wgcf-account.toml /usr/bin/wireguard-go wgcf-account.toml wgcf-profile.conf 
 
-if [[ $vi =~ lxc|openvz ]]; then
-yellow "正在检测lxc/openvz架构的vps是否开启TUN………！"
+if [[ $vi = openvz ]]; then
+yellow "正在检测openvz架构的vps是否开启TUN………！"
 sleep 2s
 TUN=$(cat /dev/net/tun 2>&1)
-if [[ ${TUN} = "cat: /dev/net/tun: File descriptor in bad state" ]]; then
-green "检测完毕：已开启TUN，支持安装wireguard-go模式的WARP(+)，继续……"
-else
-red "检测完毕：未开启TUN，不支持安装WARP(+)，请与VPS厂商沟通或后台设置以开启TUN，反馈地址 https://github.com/kkkyg/CFwarp/issues"
-exit 1
+[[ ${TUN} = "cat: /dev/net/tun: File descriptor in bad state" ]] && green "检测完毕：已开启TUN，支持安装wireguard-go模式的WARP(+)，继续……" || (red "检测完毕：未开启TUN，不支持安装WARP(+)，请与VPS厂商沟通或后台设置以开启TUN" && exit 1)
 fi
-fi
-
-if [[ $vi = lxc && $release = Centos ]]; then
-echo -e nameserver 2a01:4f8:c2c:123f::1 > /etc/resolv.conf
-fi
+[[ $vi = lxc && $release = Centos ]] && echo -e nameserver 2a01:4f8:c2c:123f::1 > /etc/resolv.conf
 
 if [[ $release = Centos ]]; then  
-yum -y install epel-release
-yum -y install wireguard-tools	
-if [[ $main -lt 5 || $minor -lt 6 ]]; then 
-if [[ ! $vi =~ lxc|openvz ]]; then
-green "经检测，内核小于5.6版本，安装WARP内核模块模式"
-yellow "内核升级到5.6版本以上，即可安装最高效的WARP内核集成模式"
-sleep 2s
-vsid=`grep -i version_id /etc/os-release | cut -d \" -f2 | cut -d . -f1`
-curl -Lo /etc/yum.repos.d/wireguard.repo https://copr.fedorainfracloud.org/coprs/jdoss/wireguard/repo/epel-$vsid/jdoss-wireguard-epel-$vsid.repo
-yum -y install epel-release wireguard-dkms
-fi
-fi	
-yum -y update
-
+yum -y install epel-release;yum -y install wireguard-tools	
+[[ $main -lt 5 || $minor -lt 6 ]] && [[ ! $vi =~ lxc|openvz ]] && curl -Lo /etc/yum.repos.d/wireguard.repo https://copr.fedorainfracloud.org/coprs/jdoss/wireguard/repo/epel-$vsid/jdoss-wireguard-epel-$vsid.repo
+yum -y install epel-release wireguard-dkms && yum -y update
 elif [[ $release = Debian ]]; then
-apt update -y 
-apt -y install lsb-release
+apt update -y && apt -y install lsb-release
 echo "deb http://deb.debian.org/debian $(lsb_release -sc)-backports main" | tee /etc/apt/sources.list.d/backports.list
-apt update -y
-apt -y --no-install-recommends install iproute2 openresolv dnsutils wireguard-tools               		
-if [[ $main -lt 5 || $minor -lt 6 ]]; then 
-if [[ ! $vi =~ lxc|openvz ]]; then
-green "经检测，内核小于5.6版本，安装WARP内核模块模式"
-yellow "内核升级到5.6版本以上，即可安装最高效的WARP内核集成模式"
-sleep 2s
-apt -y --no-install-recommends install linux-headers-$(uname -r);apt -y --no-install-recommends install wireguard-dkms
-fi
-fi		
-apt update -y
-	
+apt update -y && apt -y --no-install-recommends install iproute2 openresolv dnsutils wireguard-tools               		
+[[ $main -lt 5 || $minor -lt 6 ]] && [[ ! $vi =~ lxc|openvz ]] && apt -y --no-install-recommends install linux-headers-$(uname -r);apt -y --no-install-recommends install wireguard-dkms && apt update -y	
 elif [[ $release = Ubuntu ]]; then
-apt update -y  
-apt -y --no-install-recommends install iproute2 openresolv dnsutils wireguard-tools			
+apt update -y && apt -y --no-install-recommends install iproute2 openresolv dnsutils wireguard-tools			
 fi
 
 [[ $cpu = AMD64 ]] && wget -N https://cdn.jsdelivr.net/gh/kkkyg/CFwarp/wgcf_2.2.9_amd64 -O /usr/local/bin/wgcf && chmod +x /usr/local/bin/wgcf         
 [[ $cpu = ARM64 ]] && wget -N https://cdn.jsdelivr.net/gh/kkkyg/CFwarp/wgcf_2.2.9_arm64 -O /usr/local/bin/wgcf && chmod +x /usr/local/bin/wgcf
 [[ $vi =~ lxc|openvz ]] && wget -N https://cdn.jsdelivr.net/gh/kkkyg/CFwarp/wireguard-go -O /usr/bin/wireguard-go && chmod +x /usr/bin/wireguard-go
-
 mkdir -p /etc/wireguard/ >/dev/null 2>&1
 yellow "执行申请WARP账户过程中可能会多次提示：429 Too Many Requests，请耐心等待。"
 echo | wgcf register
@@ -225,13 +187,8 @@ done
 
 yellow "继续使用原WARP账户请等待5秒或按回车跳过 \n启用WARP+PLUS账户，请在5秒内粘贴WARP+的按键许可证秘钥(26个字符)"
 readtp "按键许可证秘钥(26个字符):" ID
-if [[ -n $ID ]]; then
-sed -i "s/license_key.*/license_key = \"$ID\"/g" wgcf-account.toml
-wgcf update $SBID > /etc/wireguard/WG+ID.log 2>&1
-green "启用WARP+PLUS账户中，如上方显示：400 Bad Request，则使用原WARP账户,相关原因请看本项目Github说明" 
-fi
+[[ -n $ID ]] && sed -i "s/license_key.*/license_key = \"$ID\"/g" wgcf-account.toml && wgcf update $SBID > /etc/wireguard/WG+ID.log 2>&1 && green "启用WARP+PLUS账户中，如上方显示：400 Bad Request，则使用原WARP账户,相关原因请看本项目Github说明" 
 wgcf generate 
-
 yellow "开始自动设置WARP(+)的MTU最佳网络吞吐量值，以优化WARP网络！"
 v66=`curl -s6m3 https://ip.gs -k`
 v44=`curl -s4m3 https://ip.gs -k`
