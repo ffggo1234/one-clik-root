@@ -530,8 +530,8 @@ blue " ${S5Status1}"
 }
 
 changportip(){
-
 wgcf(){
+un="1.更改warp的ip\n 2.升级到warp+账户\n 请选择："
 readp "$un" uninstall
 case "$uninstall" in 
 
@@ -540,6 +540,7 @@ esac
 }
 
 socks5(){
+un="1.更改warp的ip\n 2.更改socks5端口\n 3.升级到warp+账户\n 请选择："
 readp "$un" uninstall
 case "$uninstall" in 
 
@@ -547,6 +548,7 @@ case "$uninstall" in
 esac
 }
 
+un="1.开启或者关闭WGCF WARP代理\n 2.开启或关闭SOCKS5 WARP代理\n 请选择："
 readp "$un" uninstall
 case "$uninstall" in 
 
