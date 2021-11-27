@@ -190,7 +190,7 @@ readp "按键许可证秘钥(26个字符):" ID
 [[ -n $ID ]] && readtp "设备名称重命名：" sbmc
 [[ -n $sbmc ]] && SBID="--name $(echo $sbmc | sed s/[[:space:]]/_/g)"
 sed -i "s/license_key.*/license_key = \"$ID\"/g" wgcf-account.toml
-wgcf update $SBID > /etc/wireguard/WGCF+.log 2>&1
+wgcf update $SBID > /etc/wireguard/wgcf+p.log 2>&1
 green "启用WARP+PLUS账户中，如上方显示：400 Bad Request，则使用原WARP账户,相关原因请看本项目Github说明" 
 wgcf generate
 
