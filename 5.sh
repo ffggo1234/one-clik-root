@@ -538,7 +538,7 @@ un="1.更改warp的ip\n 2.升级到warp+账户\n 请选择："
 readp "$un" uninstall
 case "$uninstall" in 
 1 )
-[[ ! $(type -P warp-quick) ]] && red "WARP(+)未安装，无法启动或关闭，建议重新安装WARP(+)" || (systemctl restart wg-quick@wgcf >/dev/null 2>&1 && green "已刷新并修复WARP(+)的IP！请回主菜单查看更新后IP情况")
+[[ ! $(type -P wg-quick) ]] && red "WARP(+)未安装，无法启动或关闭，建议重新安装WARP(+)" || (systemctl restart wg-quick@wgcf >/dev/null 2>&1 && green "已刷新并修复WARP(+)的IP！请回主菜单查看更新后IP情况")
 ;;
 2 )
 cd /etc/wireguard
@@ -561,7 +561,7 @@ wv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -
 wv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
 until [[ -n $v4 || -n $v6 ]] && [[ $wv4 = plus || $wv6 = plus ]]
 do  let i++
-wg-quicklet down wgcf >/dev/null 2>&1
+wg-quick down wgcf >/dev/null 2>&1
 wg-quick up wgcf >/dev/null 2>&1
 v4=$(curl -s4m3 https://ip.gs -k)
 v6=$(curl -s6m3 https://ip.gs -k)
@@ -630,7 +630,7 @@ esac
 un="1.开启或者关闭WGCF WARP代理\n 2.开启或关闭SOCKS5 WARP代理\n 请选择："
 readp "$un" uninstall
 case "$uninstall" in 
-1 ) [[ ! $(type -P warp-quick) ]] && red "WGCF的WARP未安装，建议重新安装WARP(+)" && bash CFwarp.sh || wgcf;;
+1 ) [[ ! $(type -P wg-quick) ]] && red "WGCF的WARP未安装，建议重新安装WARP(+)" && bash CFwarp.sh || wgcf;;
 2 ) [[ ! $(type -P warp-cli) ]] && red "SOCKS5的WARP未安装，建议重新安装WARP(+)" && bash CFwarp.sh || socks;;
 esac
 }
