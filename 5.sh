@@ -630,8 +630,8 @@ esac
 un="1.开启或者关闭WGCF WARP代理\n 2.开启或关闭SOCKS5 WARP代理\n 请选择："
 readp "$un" uninstall
 case "$uninstall" in 
-1 ) [[ ! $(type -P warp-quick) ]] && red "WGCF的WARP未安装，建议重新安装WARP(+)" && bash CFwarp.sh || wgcf;
-2 ) [[ ! $(type -P warp-cli) ]] && red "SOCKS5的WARP未安装，建议重新安装WARP(+)" && bash CFwarp.sh || socks;
+1 ) [[ ! $(type -P warp-quick) ]] && red "WGCF的WARP未安装，建议重新安装WARP(+)" && bash CFwarp.sh || wgcf;;
+2 ) [[ ! $(type -P warp-cli) ]] && red "SOCKS5的WARP未安装，建议重新安装WARP(+)" && bash CFwarp.sh || socks;;
 esac
 }
 
