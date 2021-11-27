@@ -557,6 +557,7 @@ warp-cli --accept-tos disable-always-on
 yellow "启用WARP+PLUS账户，请复制WARP+的按键许可证秘钥(26个字符)后回车"
 readp "按键许可证秘钥(26个字符):" ID
 [[ -n $ID ]] && warp-cli --accept-tos set-license $ID
+red "如提示Error: Too many devices.说明超过了最多绑定4台设备限制"
 warp-cli --accept-tos connect
 warp-cli --accept-tos enable-always-on
 mport=`warp-cli --accept-tos settings | grep 'Proxy listening on' | awk -F "127.0.0.1:" '{print $2}'`
