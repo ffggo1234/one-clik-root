@@ -185,10 +185,15 @@ sleep 1s
 echo | wgcf register
 done
 
-yellow "继续使用原WARP账户请等待5秒或按回车跳过 \n启用WARP+PLUS账户，请在5秒内粘贴WARP+的按键许可证秘钥(26个字符)"
-readtp "按键许可证秘钥(26个字符):" ID
-[[ -n $ID ]] && sed -i "s/license_key.*/license_key = \"$ID\"/g" wgcf-account.toml && wgcf update $SBID > /etc/wireguard/WGCF+.log 2>&1 && green "启用WARP+PLUS账户中，如上方显示：400 Bad Request，则使用原WARP账户,相关原因请看本项目Github说明" 
-wgcf generate 
+yellow "启用WARP+PLUS账户，请粘贴WARP+的按键许可证秘钥(26个字符)并回车"
+readp "按键许可证秘钥(26个字符):" ID
+[[ -n $ID ]] && readtp "设备名称重命名：" sbmc
+[[ -n $sbmc ]] && SBID="--name $(echo $sbmc | sed s/[[:space:]]/_/g)"
+sed -i "s/license_key.*/license_key = \"$ID\"/g" wgcf-account.toml
+wgcf update $SBID > /etc/wireguard/WGCF+.log 2>&1
+green "启用WARP+PLUS账户中，如上方显示：400 Bad Request，则使用原WARP账户,相关原因请看本项目Github说明" 
+wgcf generate
+
 yellow "开始自动设置WARP(+)的MTU最佳网络吞吐量值，以优化WARP网络！"
 v66=`curl -s6m3 https://ip.gs -k`
 v44=`curl -s4m3 https://ip.gs -k`
@@ -464,9 +469,7 @@ systemctl stop wg-quick@wgcf >/dev/null 2>&1
 v44=`curl -s4m3 https://ip.gs -k`
 v66=`curl -s6m3 https://ip.gs -k`
 systemctl start wg-quick@wgcf >/dev/null 2>&1
-if [[ -n ${v44} && -n ${v66} ]]; then 
-grep -qE '^[ ]*precedence[ ]*::ffff:0:0/96[ ]*100' /etc/gai.conf || echo 'precedence ::ffff:0:0/96  100' | sudo tee -a /etc/gai.conf
-fi
+[[ -n ${v44} && -n ${v66} ]] && grep -qE '^[ ]*precedence[ ]*::ffff:0:0/96[ ]*100' /etc/gai.conf || echo 'precedence ::ffff:0:0/96  100' | sudo tee -a /etc/gai.conf
 if [[ $release = Centos ]]; then 
 yum -y install epel-release && yum -y install net-tools
 rpm -ivh http://pkg.cloudflareclient.com/cloudflare-release-el$vsid.rpm
@@ -534,80 +537,10 @@ wgcf(){
 un="1.更改warp的ip\n 2.升级到warp+账户\n 请选择："
 readp "$un" uninstall
 case "$uninstall" in 
-
-
-esac
-}
-
-socks5(){
-un="1.更改warp的ip\n 2.更改socks5端口\n 3.升级到warp+账户\n 请选择："
-readp "$un" uninstall
-case "$uninstall" in 
-
-
-esac
-}
-
-un="1.开启或者关闭WGCF WARP代理\n 2.开启或关闭SOCKS5 WARP代理\n 请选择："
-readp "$un" uninstall
-case "$uninstall" in 
-
-1 wgcf
-
-2 socks5
-esac
-}
-
-
-
-[[ ! $(type -P warp-cli) ]] && red "SOCKS5的WARP未安装，建议重新安装WARP(+)" && bash CFwarp.sh
-un="1.换SOCKS5的IP\n 2.升级SOCKS5+账户\n 3.升级WGCF+账户\n 4.更改SOCKS5端口\n 请选择："
-readp "$un" STP
-case "$STP" in 
-
 1 )
-wg=$(systemctl is-enabled wg-quick@wgcf 2>/dev/null)
-if [[ ! $wg = enabled ]]; then
-red "WARP(+)未安装，无法启动或关闭，建议重新安装WARP(+)"
-else
-systemctl restart wg-quick@wgcf >/dev/null 2>&1
-green "已刷新并修复WARP(+)的IP！请回主菜单查看更新后IP情况"
-fi
-white "============================================================================================="
-white "回主菜单，请按任意键"
-white "退出脚本，请按Ctrl+C"
-get_char && bash CFwarp.sh
-}
-
-
-
-1 )
-white " 当前socks5的warp ip"
-mport=`warp-cli --accept-tos settings | grep 'Proxy listening on' | awk -F "127.0.0.1:" '{print $2}'`
-S5ip=`curl -sx socks5h://localhost:$mport ip.gs -k`
-blue "$S5ip"
-warp-cli --accept-tos disable-always-on
-warp-cli --accept-tos delete
-warp-cli --accept-tos register
-warp-cli --accept-tos connect
-warp-cli --accept-tos enable-always-on
-white " 当前socks5的warp ip"
-mport=`warp-cli --accept-tos settings | grep 'Proxy listening on' | awk -F "127.0.0.1:" '{print $2}'`
-S5ip=`curl -sx socks5h://localhost:$mport ip.gs -k`
-blue "$S5ip"
+[[ ! $(type -P warp-quick) ]] && red "WARP(+)未安装，无法启动或关闭，建议重新安装WARP(+)" || (systemctl restart wg-quick@wgcf >/dev/null 2>&1 && green "已刷新并修复WARP(+)的IP！请回主菜单查看更新后IP情况")
 ;;
 2 )
-warp-cli --accept-tos disable-always-on
-yellow "启用WARP+PLUS账户，请复制WARP+的按键许可证秘钥(26个字符)后回车"
-readp "按键许可证秘钥(26个字符):" ID
-[[ -n $ID ]] && warp-cli --accept-tos set-license $ID
-warp-cli --accept-tos connect
-warp-cli --accept-tos enable-always-on
-mport=`warp-cli --accept-tos settings | grep 'Proxy listening on' | awk -F "127.0.0.1:" '{print $2}'`
-S5Status=$(curl -sx socks5h://localhost:$mport https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
-[[ $S5Status = plus ]] && green "已升级为SOCKS5+账号\n WGCF+账号剩余流量：$((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GiB"
-;;
-3 )
 cd /etc/wireguard
 yellow "启用WARP+PLUS账户，请粘贴WARP+的按键许可证秘钥(26个字符)并回车"
 readp "按键许可证秘钥(26个字符):" ID
@@ -641,7 +574,25 @@ WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | 
 WARPIPv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 [[ $WARPIPv6 = plus || $WARPIPv4 = plus ]] && green "已升级为WGCF+账号\n WGCF+账号设备名称：$(grep -s 'Device name' /etc/wireguard/WGCF+.log | awk '{ print $NF }')\n WGCF+账号剩余流量：$(grep -s Quota /etc/wireguard/WGCF+.log | awk '{ print $(NF-1), $NF }')"
 ;;
-4 )
+esac
+}
+
+socks(){
+un="1.更改sokcs的ip\n 2.更改socks5端口\n 3.升级到warp+账户\n 请选择："
+readp "$un" uninstall
+case "$uninstall" in 
+1 )
+warp-cli --accept-tos disable-always-on
+warp-cli --accept-tos delete
+warp-cli --accept-tos register
+warp-cli --accept-tos connect
+warp-cli --accept-tos enable-always-on
+white " 当前socks5的warp ip"
+mport=`warp-cli --accept-tos settings | grep 'Proxy listening on' | awk -F "127.0.0.1:" '{print $2}'`
+S5ip=`curl -sx socks5h://localhost:$mport ip.gs -k`
+blue "$S5ip"
+;;
+2 )
 white " 当前socks5端口："
 mport=`warp-cli --accept-tos settings | grep 'Proxy listening on' | awk -F "127.0.0.1:" '{print $2}'`
 blue "$mport"
@@ -662,6 +613,25 @@ white " 当前socks5端口："
 mport=`warp-cli --accept-tos settings | grep 'Proxy listening on' | awk -F "127.0.0.1:" '{print $2}'`
 blue "$mport"
 ;;
+3 )
+warp-cli --accept-tos disable-always-on
+yellow "启用WARP+PLUS账户，请复制WARP+的按键许可证秘钥(26个字符)后回车"
+readp "按键许可证秘钥(26个字符):" ID
+[[ -n $ID ]] && warp-cli --accept-tos set-license $ID
+warp-cli --accept-tos connect
+warp-cli --accept-tos enable-always-on
+mport=`warp-cli --accept-tos settings | grep 'Proxy listening on' | awk -F "127.0.0.1:" '{print $2}'`
+S5Status=$(curl -sx socks5h://localhost:$mport https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+[[ $S5Status = plus ]] && green "已升级为SOCKS5+账号\n WGCF+账号剩余流量：$((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GiB"
+;;
+esac
+}
+
+un="1.开启或者关闭WGCF WARP代理\n 2.开启或关闭SOCKS5 WARP代理\n 请选择："
+readp "$un" uninstall
+case "$uninstall" in 
+1 ) [[ ! $(type -P warp-quick) ]] && red "WGCF的WARP未安装，建议重新安装WARP(+)" && bash CFwarp.sh || wgcf;
+2 ) [[ ! $(type -P warp-cli) ]] && red "SOCKS5的WARP未安装，建议重新安装WARP(+)" && bash CFwarp.sh || socks;
 esac
 }
 
