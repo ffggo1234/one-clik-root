@@ -377,13 +377,13 @@ get_char && bash CFwarp.sh
 cwarp(){
 cwg(){
 wg-quick down wgcf >/dev/null 2>&1
-systemctl disable wg-quick@wgcf --now >/dev/null 2>&1
+systemctl disable --now wg-quick@wgcf --now >/dev/null 2>&1
 [[ $release = Centos ]] && (yum -y autoremove wireguard-tools wireguard-dkms) || (apt -y autoremove wireguard-tools wireguard-dkms)
 }
 cso(){
 warp-cli --accept-tos disconnect >/dev/null 2>&1
 warp-cli --accept-tos delete >/dev/null 2>&1
-systemctl disable warp-svc >/dev/null 2>&1
+systemctl disable --now warp-svc >/dev/null 2>&1
 [[ $release = Centos ]] && (yum remove cloudflare-warp -y) || (apt purge cloudflare-warp -y && rm -f /etc/apt/sources.list.d/cloudflare-client.list)
 }
 wgso2="rm -rf /usr/local/bin/wgcf /etc/wireguard/wgcf.conf /etc/wireguard/wgcf-profile.conf /etc/wireguard/wgcf-account.toml /usr/bin/wireguard-go wgcf-account.toml wgcf-profile.conf ucore.sh nf.sh CFwarp.sh"
