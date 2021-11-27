@@ -188,9 +188,9 @@ done
 yellow "启用WARP+PLUS账户，请粘贴WARP+的按键许可证秘钥(26个字符)并回车"
 readp "按键许可证秘钥(26个字符):" ID
 [[ -n $ID ]] && readtp "设备名称重命名：" sbmc
-[[ -n $sbmc ]] && SBID="--name $(echo $sbmc | sed s/[[:space:]]/_/g)"
+[[ -n $sbmc ]] && SBID="$(echo $sbmc | sed s/[[:space:]]/_/g)"
 sed -i "s/license_key.*/license_key = \"$ID\"/g" wgcf-account.toml
-wgcf update $SBID > /etc/wireguard/wgcf+p.log 2>&1
+wgcf update --name $SBID > /etc/wireguard/wgcf+p.log 2>&1
 green "启用WARP+PLUS账户中，如上方显示：400 Bad Request，则使用原WARP账户,相关原因请看本项目Github说明" 
 wgcf generate
 
@@ -568,9 +568,9 @@ cd /etc/wireguard
 yellow "启用WARP+PLUS账户，请粘贴WARP+的按键许可证秘钥(26个字符)并回车"
 readp "按键许可证秘钥(26个字符):" ID
 [[ -n $ID ]] && readp "设备名称重命名：" sbmc
-[[ -n $sbmc ]] && SBID="--name $(echo $sbmc | sed s/[[:space:]]/_/g)"
+[[ -n $sbmc ]] && SBID="$(echo $sbmc | sed s/[[:space:]]/_/g)"
 sed -i "s/license_key.*/license_key = \"$ID\"/g" wgcf-account.toml
-wgcf update $SBID > /etc/wireguard/wgcf+p.log 2>&1
+wgcf update --name $SBID > /etc/wireguard/wgcf+p.log 2>&1
 green "启用WARP+PLUS账户中，如上方显示：400 Bad Request，则使用原WARP账户,相关原因请看本项目Github说明" 
 wgcf generate
 sed -i "2s#.*#$(sed -ne 2p wgcf-profile.conf)#;3s#.*#$(sed -ne 3p wgcf-profile.conf)#;4s#.*#$(sed -ne 4p wgcf-profile.conf)#" wgcf.conf
