@@ -186,12 +186,9 @@ echo | wgcf register
 done
 
 yellow "启用WARP+PLUS账户，请粘贴WARP+的按键许可证秘钥(26个字符)并回车"
-readp "按键许可证秘钥(26个字符):" ID
-[[ -n $ID ]] && readtp "设备名称重命名：" sbmc
-[[ -n $sbmc ]] && SBID="$(echo $sbmc | sed s/[[:space:]]/_/g)"
-sed -i "s/license_key.*/license_key = \"$ID\"/g" wgcf-account.toml
-wgcf update --name $SBID > /etc/wireguard/wgcf+p.log 2>&1
-green "启用WARP+PLUS账户中，如上方显示：400 Bad Request，则使用原WARP账户,相关原因请看本项目Github说明" 
+readtp "按键许可证秘钥(26个字符):" ID
+[[ -n $ID ]] && sed -i "s/license_key.*/license_key = \"$ID\"/g" wgcf-account.toml && readtp "设备名称重命名：" sbmc
+[[ -n $sbmc ]] && (SBID="$(echo $sbmc | sed s/[[:space:]]/_/g)" && wgcf update --name $SBID > /etc/wireguard/wgcf+p.log 2>&1) || wgcf update > /etc/wireguard/wgcf+p.log 2>&1
 wgcf generate
 
 yellow "开始自动设置WARP(+)的MTU最佳网络吞吐量值，以优化WARP网络！"
