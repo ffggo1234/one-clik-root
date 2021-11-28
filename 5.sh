@@ -29,8 +29,7 @@ fi
 vsid=`grep -i version_id /etc/os-release | cut -d \" -f2 | cut -d . -f1`
 [[ $release = Centos && ${vsid} -lt 7 ]] && red "不支持 Centos 7 以下系统 " && exit 1
 [[ $release = Ubuntu && ${vsid} -lt 18 ]] && red "不支持 Ubuntu 18 以下系统 " && exit 1
-if [[ $release = Debian && ${vsid} -lt 10 ]]; then
-red "不支持 Debian 10 以下系统 " && exit 1
+[[ $release = Debian && ${vsid} -lt 10 ]] && red "不支持 Debian 10 以下系统 " && exit 1
 fi
 sys(){
 [ -f /etc/os-release ] && grep -i pretty_name /etc/os-release | cut -d \" -f2 && return
