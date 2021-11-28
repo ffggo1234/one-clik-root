@@ -562,6 +562,9 @@ S5Status=$(curl -sx socks5h://localhost:$mport https://www.cloudflare.com/cdn-cg
 [[ $S5Status = plus ]] && green "已升级为SOCKS5+账号\n WGCF+账号剩余流量：$((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000))GB"
 ;;
 3 )
+wv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+wv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+[[ $wv4 = plus || $wv6 = plus ]] && red "当前已是WARP+账户，无须再升级" && bash CFwarp.sh 
 cd /etc/wireguard
 yellow "启用WARP+PLUS账户，请粘贴WARP+的按键许可证秘钥(26个字符)并回车"
 readp "按键许可证秘钥(26个字符):" ID
