@@ -619,18 +619,9 @@ esac
 }
 
 start_menu(){
-WARPIPv4=$(curl -s4m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
-WARPIPv6=$(curl -s6m3 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
-if [[ $WARPIPv6 = plus || $WARPIPv4 = plus || $WARPIPv6 = on || $WARPIPv4 = on ]]; then
-systemctl stop wg-quick@wgcf >/dev/null 2>&1
-v44=`curl -s4m2 https://ip.gs -k`
-v66=`curl -s6m2 https://ip.gs -k`
-systemctl start wg-quick@wgcf >/dev/null 2>&1
-else
-v44=`curl -s4m2 https://ip.gs -k`
-v66=`curl -s6m2 https://ip.gs -k`
-fi
-if [[ -n ${v44} && -n ${v66} ]]; then 
+V6=`ip a | head -n 14 | grep -w inet6 | grep global`
+V4=`ip a | head -n 14 | grep -w inet | grep global`
+if [[ -n $V4 && -n $V6 ]]; then 
 clear
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 yellow " 详细说明 https://github.com/kkkyg/CFwarp  YouTube频道：甬哥侃侃侃"    
@@ -682,7 +673,7 @@ case "$menuNumberInput" in
  0 ) exit 0;;
 esac
   
-elif [[ -n ${v66} && -z ${v44} ]]; then
+elif [[ -n $V6 && -z $V4 ]]; then
 clear
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 yellow " 详细说明 https://github.com/kkkyg/CFwarp  YouTube频道：甬哥侃侃侃" 
@@ -728,7 +719,7 @@ case "$menuNumberInput" in
  0 ) exit 0;;
 esac
 
-elif [[ -z ${v66} && -n ${v44} ]]; then
+elif [[ -z $V6 && -n $V4 ]]; then
 clear
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 yellow " 详细说明 https://github.com/kkkyg/CFwarp  YouTube频道：甬哥侃侃侃" 
@@ -778,9 +769,8 @@ case "$menuNumberInput" in
  0 ) exit 0;;
 esac
 else
-wg-quick down wgcf >/dev/null 2>&1
-systemctl restart wg-quick@wgcf >/dev/null 2>&1
-bash CFwarp.sh
+red "无法检测，请输入ip a"
+red "把内容反馈到https://github.com/kkkyg/CFwarp/issues"
 fi
 }
 start_menu "first" 
