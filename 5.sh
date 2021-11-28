@@ -16,11 +16,11 @@ readp(){ read -p "$(green "$1")" $2;}
 [[ $EUID -ne 0 ]] && yellow "请以root模式运行脚本" && exit 1
 
 if [[ -f /etc/redhat-release ]] || cat /etc/issue | grep -q -E -i "centos|red hat|redhat" || cat /proc/version | grep -q -E -i "centos|red hat|redhat"; then
-release="Centos"
+release=Centos
 elif cat /etc/issue | grep -q -E -i "debian" || cat /proc/version | grep -q -E -i "debian"; then
-release="Debian"
+release=Debian
 elif cat /etc/issue | grep -q -E -i "ubuntu" || cat /proc/version | grep -q -E -i "ubuntu"; then
-release="Ubuntu"
+release=Ubuntu
 else 
 red "不支持你当前系统，请选择使用Ubuntu,Debian,Centos系统。请向作者反馈 https://github.com/kkkyg/CFwarp/issues"
 rm -f CFwarp.sh && exit 1
