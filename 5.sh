@@ -565,7 +565,7 @@ S5Status=$(curl -sx socks5h://localhost:$mport https://www.cloudflare.com/cdn-cg
 cd /etc/wireguard
 yellow "启用WARP+PLUS账户，请粘贴WARP+的按键许可证秘钥(26个字符)并回车"
 readp "按键许可证秘钥(26个字符):" ID
-[[ -n $ID ]] && sed -i "s/license_key.*/license_key = \"$ID\"/g" wgcf-account.toml && readp "设备名称重命名：" sbmc
+[[ -n $ID ]] && sed -i "s/license_key.*/license_key = \"$ID\"/g" wgcf-account.toml && readp "设备名称重命名：" sbmc || red "未输入warp+密钥"
 [[ -n $sbmc ]] && SBID="--name $(echo $sbmc | sed s/[[:space:]]/_/g)"
 wgcf update $SBID > /etc/wireguard/wgcf+p.log 2>&1
 wgcf generate
