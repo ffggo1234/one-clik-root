@@ -31,7 +31,7 @@ vsid=`grep -i version_id /etc/os-release | cut -d \" -f2 | cut -d . -f1`
 [[ $release = Ubuntu && ${vsid} -lt 18 ]] && red "不支持 Ubuntu 18 以下系统 " && exit 1
 if [[ $release = Debian && ${vsid} -lt 10 ]]; then
 red "不支持 Debian 10 以下系统 " && exit 1
-
+fi
 sys(){
 [ -f /etc/os-release ] && grep -i pretty_name /etc/os-release | cut -d \" -f2 && return
 [ -f /etc/lsb-release ] && grep -i description /etc/lsb-release | cut -d \" -f2 && return
