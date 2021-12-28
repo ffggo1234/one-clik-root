@@ -19,5 +19,5 @@ service sshd restart
 green "VPS当前用户名：root"
 green "vps当前root密码：$mima"
 else
-red "当前vps不支持root账户或无法自定义root密码" && exit 0
+red "当前vps不支持root账户或无法自定义root密码" && exit 1
 fi
