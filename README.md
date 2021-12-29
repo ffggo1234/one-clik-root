@@ -1,4 +1,4 @@
-### Root一键脚本
+### 获取Root权限，可改root密码的一键脚本
 
 VPS应用环境：纯IPV4、纯IPV6、双栈IPV4+IPV6，
 
