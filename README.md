@@ -1,6 +1,6 @@
 ### Root一键脚本
 
-VPS应用环境：纯IPV4、纯IPV6、双栈IPV4+IPV6，建议在root模式下运行。
+VPS应用环境：纯IPV4、纯IPV6、双栈IPV4+IPV6，可以root与非root模式下运行。
 
 脚本集成获取最高权限属性（以防止被暴力破解后改属性）
 
